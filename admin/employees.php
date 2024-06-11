@@ -63,28 +63,28 @@ require_once('partials/_head.php');
                 </thead>
                 <tbody>
                   <?php
-                  $ret = "SELECT e.*, p.name AS pos_name FROM employees e INNER JOIN positions p ON e.pos_id = p.id";
+                  $ret = "SELECT * FROM getEmployeeDetail";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
-                  while ($employee = $res->fetch_object()) {
+                  while ($emp = $res->fetch_object()) {
                   ?>
                     <tr>
-                      <td><?php echo $employee->id; ?></td>
-                      <td><?php echo $employee->name; ?></td>
-                      <td><?php echo $employee->gender; ?></td>
-                      <td><?php echo $employee->pos_name; ?></td>
-                      <td><?php echo $employee->phone; ?></td>
-                      <td><?php echo $employee->email; ?></td>
+                      <td><?php echo $emp->id; ?></td>
+                      <td><?php echo $emp->name; ?></td>
+                      <td><?php echo $emp->gender; ?></td>
+                      <td><?php echo $emp->emp_pos; ?></td>
+                      <td><?php echo $emp->phone; ?></td>
+                      <td><?php echo $emp->emp_email; ?></td>
                       <td>
-                        <a href="employee.php?delete=<?php echo $employee->id; ?>">
+                        <a href="employee.php?delete=<?php echo $emp->id; ?>">
                           <button class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i>
                             Delete
                           </button>
                         </a>
 
-                        <a href="update_employee.php?update=<?php echo $employee->id; ?>">
+                        <a href="update_employee.php?update=<?php echo $emp->id; ?>">
                           <button class="btn btn-sm btn-primary">
                             <i class="fas fa-user-edit"></i>
                             Update

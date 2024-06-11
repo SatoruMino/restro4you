@@ -13,8 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (password_verify($password, $user['password'])) {
             $role = $user['role'];
             if ($role == 'admin') {
-                $_SESSION['adminId'] = $user['u_id'];
+                $_SESSION['adminId'] = $user['id'];
                 header('Location: admin/index.php');
+                exit();
+            } else if ($role == 'employee') {
+                $_SESSION['employeeId'] = $user['id'];
+                header('Location: employee/index.php');
+                exit();
+            } else {
+                $_SESSION['customerId'] = $user['id'];
+                header('Location: customer/index.php');
                 exit();
             }
         } else {

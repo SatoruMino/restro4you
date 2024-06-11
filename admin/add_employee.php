@@ -8,29 +8,37 @@ check_login();
 //Add Staff
 if (isset($_POST['addEmployee'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone']) || empty($_POST['employee_password'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['email']) || empty($_POST['dob']) || empty($_POST['phone']) || empty($_POST['password'])) {
     $err = "Blank Values Can't Be Accepted";
   } else {
-    $employee_code = $_POST['employee_code'];
-    $employee_name = $_POST['employee_name'];
-    $employee_gender = $_POST['employee_gender'];
-    $employee_position = $_POST['employee_position'];
-    $employee_email = $_POST['employee_email'];
-    $employee_dob = $_POST['employee_dob'];
-    $employee_phone = $_POST['employee_phone'];
-    $employee_password = password_hash($_POST['employee_password'], PASSWORD_DEFAULT);
-
+    $code = $_POST['code'];
+    $name = $_POST['name'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
+    $position = $_POST['position'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO employees (id, name, gender, dob, pos_id, phone, password, email) VALUES(?,?,?,?,?,?,?,?)";
+    $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'employee')";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssssss', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_password, $employee_email);
+    $rc = $postStmt->bind_param('ss', $email, $password);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
-      $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
-    } else {
-      $err = "Please Try Again Or Try Later";
+      $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
+      if ($result) {
+        $row = $result->fetch_assoc();
+        $u_id = $row['id'];
+        $empStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, pos_id, dob, phone, u_id) VALUE (?,?,?,?,?,?,?)');
+        $empStmt->bind_param('sssssss', $code, $name, $gender, $position, $dob, $phone, $u_id);
+        if ($empStmt->execute()) {
+          $success = "Customer Has Been Added" && header("refresh:1; url=employees.php");
+        } else {
+          $err = "Please Try Again Or Try Later";
+        }
+      }
     }
   }
 }
@@ -70,25 +78,25 @@ require_once('partials/_head.php');
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Code</label>
-                    <input type="text" name="employee_code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
+                    <input type="text" name="code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
                   </div>
                   <div class="col-md-6">
                     <label>Name</label>
-                    <input type="text" name="employee_name" class="form-control" value="">
+                    <input type="text" name="name" class="form-control" value="">
                   </div>
                   <hr>
                 </div>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Gender</label>
-                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="employee_gender" id="employee_gender">
+                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="gender" id="gender">
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
                     </select>
                   </div>
                   <div class="col-md-6">
                     <label>Position</label>
-                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="employee_position" id="employee_position">
+                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="position" id="position">
                       <?php
                       $stmt = $mysqli->prepare('SELECT * FROM positions');
                       $stmt->execute();
@@ -103,21 +111,21 @@ require_once('partials/_head.php');
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Email</label>
-                    <input type="email" name="employee_email" class="form-control" value="">
+                    <input type="email" name="email" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
                     <label>Date of Birth</label>
-                    <input type="date" name="employee_dob" class="form-control" value="">
+                    <input type="date" name="dob" class="form-control" value="">
                   </div>
                 </div>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Phone</label>
-                    <input type="phone" name="employee_phone" class="form-control" value="">
+                    <input type="phone" name="phone" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
                     <label>Create Password</label>
-                    <input type="text" name="employee_password" class="form-control" value="">
+                    <input type="text" name="password" class="form-control" value="">
                   </div>
                 </div>
                 <br>

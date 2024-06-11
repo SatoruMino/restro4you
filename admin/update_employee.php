@@ -8,24 +8,25 @@ check_login();
 //Udpate Staff
 if (isset($_POST['updateEmployee'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['email']) || empty($_POST['phone'])) {
     $err = "Blank values aren't accepted!";
   } else {
-    $employee_code = $_POST['employee_code'];
-    $employee_name = $_POST['employee_name'];
-    $employee_gender = $_POST['employee_gender'];
-    $employee_position = $_POST['employee_position'];
-    $employee_email = $_POST['employee_email'];
-    $employee_dob = $_POST['employee_dob'];
-    $employee_phone = $_POST['employee_phone'];
-    $employee_address = $_POST['employee_password'] ?? $_POST['old_employee_password'];
+    $code = $_POST['code'];
+    $uid = $_POST['u_id'];
+    $name = $_POST['name'];
+    $gender = $_POST['gender'];
+    $position = $_POST['position'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $dob = $_POST['dob'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT) ?? $_POST['old_password'];
     $update = $_GET['update'];
 
     //Insert Captured information to a database table
-    $postQuery = "UPDATE employees SET  id =?, name =?, gender =?, dob =?, pos_id =?, phone=?, address =?, email =? WHERE id =?";
+    $postQuery = "CALL updateEmployeeDetail(?,?,?,?,?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssssssi', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_password, $employee_email, $update);
+    $rc = $postStmt->bind_param('sssssssss', $uid, $name, $gender, $position, $phone, $dob, $email, $password, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -49,11 +50,11 @@ require_once('partials/_head.php');
     <?php
     require_once('partials/_topnav.php');
     $update = $_GET['update'];
-    $ret = "SELECT * FROM  employees WHERE id = '$update' ";
+    $ret = "SELECT e.*, u.id AS u_id, u.email AS email, u.password AS password FROM employees e INNER JOIN users u ON e.u_id = u.id WHERE e.id = '$update'";
     $stmt = $mysqli->prepare($ret);
     $stmt->execute();
     $res = $stmt->get_result();
-    while ($employee = $res->fetch_object()) {
+    while ($emp = $res->fetch_object()) {
     ?>
       <!-- Header -->
       <div style="background-image: url(assets/img/theme/restro00.jpg); background-size: cover;" class="header  pb-8 pt-5 pt-md-8">
@@ -77,55 +78,58 @@ require_once('partials/_head.php');
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Code</label>
-                      <input type="text" name="employee_code" class="form-control" value="<?php echo $employee->id; ?>">
+                      <input type="text" name="code" class="form-control" value="<?php echo $emp->id; ?>">
+                      <input type="hidden" name="u_id" class="form-control" value="<?php echo $emp->u_id; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Name</label>
-                      <input type="text" name="employee_name" class="form-control" value="<?php echo $employee->name; ?>">
+                      <input type="text" name="name" class="form-control" value="<?php echo $emp->name; ?>">
                     </div>
-                    <hr>
                   </div>
+                  <hr>
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Gender</label>
-                      <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="employee_gender" id="employee_gender">
-                        <option value="Male" <?php echo ($employee->gender == "Male") ? 'selected' : null;  ?>>Male</option>
-                        <option value="Female" <?php echo ($employee->gender == "Female") ? 'selected' : null;  ?>>Female</option>
+                      <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="gender" id="employee_gender">
+                        <option value="Male" <?php echo ($emp->gender == "Male") ? 'selected' : null;  ?>>Male</option>
+                        <option value="Female" <?php echo ($emp->gender == "Female") ? 'selected' : null;  ?>>Female</option>
                       </select>
                     </div>
                     <div class="col-md-6">
                       <label>Position</label>
-                      <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="employee_position" id="employee_position">
+                      <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="position" id="employee_position">
                         <?php
                         $stmt = $mysqli->prepare('SELECT * FROM positions');
                         $stmt->execute();
                         $res = $stmt->get_result();
                         while ($row = $res->fetch_object()) {
                         ?>
-                          <option value="<?php echo $row->id; ?>" <?php echo ($employee->pos_id == $row->id) ? 'selected' : null; ?>><?php echo $row->name; ?></option>
+                          <option value="<?php echo $row->id; ?>" <?php echo ($emp->pos_id == $row->id) ? 'selected' : null; ?>><?php echo $row->name; ?></option>
                         <?php } ?>
                       </select>
                     </div>
                   </div>
+                  <hr>
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Email</label>
-                      <input type="email" name="employee_email" class="form-control" value="<?php echo $employee->email; ?>">
+                      <input type="email" name="email" class="form-control" value="<?php echo $emp->email; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Date of Birth</label>
-                      <input type="date" name="employee_dob" class="form-control" value="<?php echo $employee->dob; ?>">
+                      <input type="date" name="dob" class="form-control" value="<?php echo $emp->dob; ?>">
                     </div>
                   </div>
+                  <hr>
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Phone</label>
-                      <input type="phone" name="employee_phone" class="form-control" value="<?php echo $employee->phone; ?>">
+                      <input type="phone" name="phone" class="form-control" value="<?php echo $emp->phone; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>New Password</label>
-                      <input type="text" name="employee_password" class="form-control">
-                      <input type="hidden" name="old_employee_password" class="form-control" value="<?php echo $employee->password; ?>">
+                      <input type="text" name="password" class="form-control" value="">
+                      <input type="hidden" name="old_password" class="form-control" value="<?php echo $emp->password; ?>">
                     </div>
                   </div>
                   <br>

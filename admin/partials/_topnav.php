@@ -1,7 +1,7 @@
 <?php
 $userId = $_SESSION['adminId'];
 //$login_id = $_SESSION['login_id'];
-$ret = "SELECT * FROM  admins  WHERE id = '$userId'";
+$ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
 $stmt = $mysqli->prepare($ret);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -17,16 +17,6 @@ while ($user = $res->fetch_object()) {
             <!-- User -->
             <ul class="navbar-nav align-items-center d-none d-md-flex">
                 <li class="nav-item dropdown">
-                    <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <div class="media align-items-center">
-                            <span class="avatar avatar-sm rounded-circle">
-                                <img alt="Image placeholder" src="assets/img/theme/user-a-min.png">
-                            </span>
-                            <div class="media-body ml-2 d-none d-lg-block">
-                                <span class="mb-0 text-sm  font-weight-bold"><?php echo $user->name; ?></span>
-                            </div>
-                        </div>
-                    </a>
                     <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
                         <div class=" dropdown-header noti-title">
                             <h6 class="text-overflow m-0">Welcome!</h6>
