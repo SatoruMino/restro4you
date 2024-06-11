@@ -15,7 +15,7 @@ while ($user = $res->fetch_object()) {
         <span class="navbar-toggler-icon"></span>
       </button>
       <!-- Brand -->
-      <a class="navbar-brand pt-0" href="index.php">
+      <a class="navbar-brand pt-0" href="dashboard.php">
         <img src="assets/img/brand/repos.png" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
@@ -57,7 +57,7 @@ while ($user = $res->fetch_object()) {
         <div class="navbar-collapse-header d-md-none">
           <div class="row">
             <div class="col-6 collapse-brand">
-              <a href="index.php">
+              <a href="dashboard.php">
                 <img src="assets/img/brand/repos.png">
               </a>
             </div>
@@ -83,7 +83,7 @@ while ($user = $res->fetch_object()) {
         <!-- Navigation -->
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="index.php">
+            <a class="nav-link" href="dashboard.php">
               <i class="bx bxs-dashboard text-primary"></i> DASHBOARD
             </a>
           </li>

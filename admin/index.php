@@ -1,90 +1,224 @@
 <?php
 session_start();
-include("config/pdoconfig.php");
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-  $email = $_POST['email'];
-  $password = $_POST['password'];
-  $stm = $pdo->prepare('SELECT * FROM admins WHERE email = :email');
-  $stm->bindParam(':email', $email, PDO::PARAM_STR);
-  $stm->execute();
-  $result = $stm->fetch(PDO::FETCH_OBJ);
-  if ($result) {
-    $hashedPass = $result->password;
-    if (password_verify($password, $hashedPass)) {
-      $_SESSION['adminId'] = $result->id;
-      header('Location: dashboard.php');
-      exit();
-    } else {
-      $error = 'Incorrect Password!';
-    }
-  } else {
-    $error = 'Admin not found';
-  }
-}
-
-
-
+include('config/config.php');
+include('config/checklogin.php');
+check_login();
+require_once('partials/_head.php');
+require_once('partials/_analytics.php');
 ?>
 
-<!DOCTYPE html>
-<!-- Coding By CodingNepal - codingnepalweb.com -->
-<html lang="en" dir="ltr">
+<body>
+  <!-- For more projects: Visit codeastro.com  -->
+  <!-- Sidenav -->
+  <?php
+  require_once('partials/_sidebar.php');
+  ?>
+  <!-- Main content -->
+  <div class="main-content">
+    <!-- Top navbar -->
+    <?php
+    require_once('partials/_topnav.php');
+    ?>
+    <!-- Header -->
+    <div style="background-image: url(assets/img/theme/restro00.jpg); background-size: cover;" class="header  pb-8 pt-5 pt-md-8">
+      <span class="mask bg-gradient-dark opacity-8"></span>
+      <div class="container-fluid">
+        <div class="header-body">
+          <!-- Card stats -->
+          <div class="row">
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Customers</h5>
+                      <span class="h2 font-weight-bold mb-0"><?php echo $customers; ?></span>
+                    </div><!-- For more projects: Visit codeastro.com  -->
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-danger text-white rounded-circle shadow">
+                        <i class="fas fa-users"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- For more projects: Visit codeastro.com  -->
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Products</h5>
+                      <span class="h2 font-weight-bold mb-0"><?php echo $products; ?></span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-primary text-white rounded-circle shadow">
+                        <i class="fas fa-utensils"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Orders</h5>
+                      <span class="h2 font-weight-bold mb-0"><?php echo $orders; ?></span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
+                        <i class="fas fa-shopping-cart"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-3 col-lg-6">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col">
+                      <h5 class="card-title text-uppercase text-muted mb-0">Sales</h5>
+                      <span class="h2 font-weight-bold mb-0">$<?php echo $sales; ?></span>
+                    </div>
+                    <div class="col-auto">
+                      <div class="icon icon-shape bg-green text-white rounded-circle shadow">
+                        <i class="fas fa-dollar-sign"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Page content -->
+    <div class="container-fluid mt--7">
+      <div class="row mt-5">
+        <div class="col-xl-12 mb-5 mb-xl-0">
+          <div class="card shadow">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Recent Orders</h3>
+                </div>
+                <div class="col text-right">
+                  <a href="orders_reports.php" class="btn btn-sm btn-primary">See all</a>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr><!-- For more projects: Visit codeastro.com  -->
+                    <th class="text-success" scope="col"><b>Code</b></th>
+                    <th scope="col"><b>Customer</b></th>
+                    <th class="text-success" scope="col"><b>Product</b></th>
+                    <th scope="col"><b>Unit Price</b></th>
+                    <th class="text-success" scope="col"><b>Qty</b></th>
+                    <th scope="col"><b>Total</b></th>
+                    <th scop="col"><b>Status</b></th>
+                    <th class="text-success" scope="col"><b>Date</b></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
+                  $ret = "SELECT * FROM orders ORDER BY `orders`.`order_date` DESC LIMIT 7 ";
+                  $stmt = $mysqli->prepare($ret);
+                  $stmt->execute();
+                  $res = $stmt->get_result();
+                  while ($order = $res->fetch_object()) {
+                    $total = ($order->prod_price * $order->prod_qty);
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ADMINLOGIN | FOOD4YOU RESTAURANT</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <link rel="stylesheet" href="../style/main.min.css">
-  <script src="../js/jquery.min.js"></script>
-  <script src="../js/_showsnackbar.js"></script>
-</head>
-
-<div class="d-flex justify-content-center align-items-center min-vh-100 w-100">
-  <div class="wrapper">
-    <h2>ADMINLOGIN</h2>
-    <form action="index.php" method="POST" id="loginForm" name="loginForm">
-      <div class="input-box">
-        <input type="email" id="email" name="email" placeholder="What's your email?" required>
+                  ?>
+                    <tr>
+                      <th class="text-success" scope="row"><?php echo $order->order_code; ?></th>
+                      <td><?php echo $order->customer_name; ?></td>
+                      <td class="text-success"><?php echo $order->prod_name; ?></td>
+                      <td>$<?php echo $order->prod_price; ?></td>
+                      <td class="text-success"><?php echo $order->prod_qty; ?></td>
+                      <td>$<?php echo $total; ?></td>
+                      <td><?php if ($order->order_status == '') {
+                            echo "<span class='badge badge-danger'>Not Paid</span>";
+                          } else {
+                            echo "<span class='badge badge-success'>$order->order_status</span>";
+                          } ?></td>
+                      <td class="text-success"><?php echo date('d/M/Y g:i', strtotime($order->created_at)); ?></td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="input-box">
-        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+      <!-- For more projects: Visit codeastro.com  -->
+      <div class="row mt-5">
+        <div class="col-xl-12">
+          <div class="card shadow">
+            <div class="card-header border-0">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h3 class="mb-0">Recent Payments</h3>
+                </div>
+                <div class="col text-right">
+                  <a href="payments_reports.php" class="btn btn-sm btn-primary">See all</a>
+                </div>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <!-- Projects table -->
+              <table class="table align-items-center table-flush">
+                <thead class="thead-light">
+                  <tr>
+                    <th class="text-success" scope="col"><b>Code</b></th>
+                    <th scope="col"><b>Amount</b></th>
+                    <th class='text-success' scope="col"><b>Order Code</b></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
+                  $ret = "SELECT * FROM payments ORDER BY `payments`.`paid_date` DESC LIMIT 7 ";
+                  $stmt = $mysqli->prepare($ret);
+                  $stmt->execute();
+                  $res = $stmt->get_result();
+                  while ($payment = $res->fetch_object()) {
+                  ?>
+                    <tr>
+                      <th class="text-success" scope="row">
+                        <?php echo $payment->id; ?>
+                      </th>
+                      <td>
+                        $<?php echo $payment->amount; ?>
+                      </td>
+                      <td class='text-success'>
+                        <?php echo $payment->o_id; ?>
+                      </td>
+                    </tr>
+                  <?php } ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="input-box button">
-        <input type="button" id="login" name="login" value="Login">
-      </div>
-      <div id="snackbar" name="snackbar"></div>
-      <input type="hidden" id="error" name="error" value="<?php echo $error; ?>">
-    </form>
+      <!-- Footer -->
+      <?php require_once('partials/_footer.php'); ?>
+    </div>
   </div>
-</div>
-<?php require_once("partials/_scripts.php"); ?>
-<script>
-  var snackbar = $('#snackbar');
-
-  function validateUserForm() {
-    var email = $('#email').val();
-    var password = $('#password').val();
-    if (email == '' || password == '') {
-      showSnackBar(snackbar, 'All field are required!');
-      return false;
-    }
-    return true;
-  }
-  $(document).ready(function() {
-    var error = $('#error').val();
-    if (error) {
-      showSnackBar(snackbar, error);
-    }
-    $('#login').click(function() {
-
-      if (validateUserForm()) {
-        $('#loginForm').submit();
-      }
-    });
-  });
-</script>
+  <!-- Argon Scripts -->
+  <?php
+  require_once('partials/_scripts.php');
+  ?>
 </body>
+<!-- For more projects: Visit codeastro.com  -->
 
 </html>

@@ -1,3 +1,33 @@
+<?php
+session_start();
+include("config/pdoconfig.php");
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        if (password_verify($password, $user['password'])) {
+            $role = $user['role'];
+            if ($role == 'admin') {
+                $_SESSION['adminId'] = $user['u_id'];
+                header('Location: admin/index.php');
+                exit();
+            }
+        } else {
+            $error = 'User entered the incorrect password';
+        }
+    } else {
+        $error = 'User has not been registered yet';
+    }
+}
+
+
+?>
+
 <!DOCTYPE html>
 <!-- Coding By CodingNepal - codingnepalweb.com -->
 <html lang="en" dir="ltr">
@@ -15,19 +45,50 @@
 <div class="d-flex justify-content-center align-items-center min-vh-100 w-100 mx-2">
     <div class="wrapper">
         <h2>LOGIN</h2>
-        <form action="">
+        <form action="index.php" method="POST" id="loginForm" name="loginForm">
             <div class="input-box">
-                <input type="button" id="admin" name="admin" value="Admin" onclick="window.location.href='admin/'">
+                <input type="email" id="email" name="email" placeholder="What's your email?" required>
             </div>
             <div class="input-box">
-                <input type="button" id="admin" name="admin" value="Staff" onclick="window.location.href='cashier/'">
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
             </div>
-            <div class="input-box">
-                <input type="button" id="admin" name="admin" value="Customer" onclick="window.location.href='customer/'">
+            <div class="input-box button">
+                <input type="button" id="login" name="login" value="Login">
+            </div>
+            <div id="snackbar" name="snackbar"></div>
+            <input type="hidden" id="error" name="error" value="<?php echo $error; ?>">
+            <div class="text">
+                <h3>Not yet having an account? <a href="register.php">Create one</a></h3>
             </div>
         </form>
     </div>
 </div>
+<?php require_once("partials/_scripts.php"); ?>
+<script>
+    var snackbar = $('#snackbar');
+
+    function validateUserForm() {
+        var email = $('#email').val();
+        var password = $('#password').val();
+        if (email == '' || password == '') {
+            showSnackBar(snackbar, 'All field are required!');
+            return false;
+        }
+        return true;
+    }
+    $(document).ready(function() {
+        var error = $('#error').val();
+        if (error) {
+            showSnackBar(snackbar, error);
+        }
+        $('#login').click(function() {
+
+            if (validateUserForm()) {
+                $('#loginForm').submit();
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
