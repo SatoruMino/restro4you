@@ -34,16 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LOGIN | FOOD4YOU RESTAURANT</title>
+  <title>ADMINLOGIN | FOOD4YOU RESTAURANT</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link rel="stylesheet" href="../style/main.min.css">
   <script src="../js/jquery.min.js"></script>
   <script src="../js/_showsnackbar.js"></script>
 </head>
 
-<div class="d-flex justify-content-center align-items-center min-vh-100">
+<div class="d-flex justify-content-center align-items-center min-vh-100 w-100">
   <div class="wrapper">
-    <h2>LOGIN</h2>
+    <h2>ADMINLOGIN</h2>
     <form action="index.php" method="POST" id="loginForm" name="loginForm">
       <div class="input-box">
         <input type="email" id="email" name="email" placeholder="What's your email?" required>

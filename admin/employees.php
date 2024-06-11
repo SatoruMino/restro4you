@@ -12,7 +12,7 @@ if (isset($_GET['delete'])) {
   $stmt->execute();
   $stmt->close();
   if ($stmt) {
-    $success = "Deleted" && header("refresh:1; url=hrm.php");
+    $success = "Deleted" && header("refresh:1; url=employees.php");
   } else {
     $err = "Try Again Later";
   }
@@ -58,7 +58,6 @@ require_once('partials/_head.php');
                     <th scope="col">POSITION</th>
                     <th scope="col">PHONE</th>
                     <th scope="col">EMAIL</th>
-                    <th scope="col">ADDRESS</th>
                     <th scope="col">ACTIONS</th>
                   </tr>
                 </thead>
@@ -77,7 +76,6 @@ require_once('partials/_head.php');
                       <td><?php echo $employee->pos_name; ?></td>
                       <td><?php echo $employee->phone; ?></td>
                       <td><?php echo $employee->email; ?></td>
-                      <td><?php echo $employee->address; ?></td>
                       <td>
                         <a href="employee.php?delete=<?php echo $employee->id; ?>">
                           <button class="btn btn-sm btn-danger">

@@ -56,7 +56,7 @@ require_once('partials/_head.php');
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">Name</th>
-                    <th scope="col">Gender</th>
+                    <th scope="col">Email</th>
                     <th scope="col">Phone</th>
                     <th scope="col">Address</th>
                     <th scope="col">Actions</th>
@@ -64,19 +64,19 @@ require_once('partials/_head.php');
                 </thead>
                 <tbody>
                   <?php
-                  $ret = "SELECT * FROM  customers";
+                  $ret = "SELECT * FROM  customers ORDER BY `created_at`";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
                   while ($cust = $res->fetch_object()) {
                   ?>
                     <tr>
-                      <td><?php echo $cust->customer_name; ?></td>
-                      <td><?php echo $cust->customer_gender; ?></td>
-                      <td><?php echo $cust->customer_phone; ?></td>
-                      <td><?php echo $cust->customer_address; ?></td>
+                      <td><?php echo $cust->name; ?></td>
+                      <td><?php echo $cust->email; ?></td>
+                      <td><?php echo $cust->phone; ?></td>
+                      <td><?php echo $cust->address; ?></td>
                       <td>
-                        <a href="customes.php?delete=<?php echo $cust->id; ?>">
+                        <a href="customers.php?delete=<?php echo $cust->id; ?>">
                           <button class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i>
                             Delete

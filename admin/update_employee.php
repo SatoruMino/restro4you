@@ -8,7 +8,7 @@ check_login();
 //Udpate Staff
 if (isset($_POST['updateEmployee'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone']) || empty($_POST['employee_address'])) {
+  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone'])) {
     $err = "Blank values aren't accepted!";
   } else {
     $employee_code = $_POST['employee_code'];
@@ -18,18 +18,18 @@ if (isset($_POST['updateEmployee'])) {
     $employee_email = $_POST['employee_email'];
     $employee_dob = $_POST['employee_dob'];
     $employee_phone = $_POST['employee_phone'];
-    $employee_address = $_POST['employee_address'];
+    $employee_address = $_POST['employee_password'] ?? $_POST['old_employee_password'];
     $update = $_GET['update'];
 
     //Insert Captured information to a database table
     $postQuery = "UPDATE employees SET  id =?, name =?, gender =?, dob =?, pos_id =?, phone=?, address =?, email =? WHERE id =?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssssssi', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_address, $employee_email, $update);
+    $rc = $postStmt->bind_param('ssssssssi', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_password, $employee_email, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
-      $success = "Employee Has Been Updated" && header("refresh:1; url=employee.php");
+      $success = "Employee Has Been Updated" && header("refresh:1; url=employees.php");
     } else {
       $err = "Please Try Again Or Try Later";
     }
@@ -123,8 +123,9 @@ require_once('partials/_head.php');
                       <input type="phone" name="employee_phone" class="form-control" value="<?php echo $employee->phone; ?>">
                     </div>
                     <div class="col-md-6">
-                      <label>Address</label>
-                      <textarea type="date" name="employee_address" class="form-control"><?php echo $employee->address; ?></textarea>
+                      <label>New Password</label>
+                      <input type="text" name="employee_password" class="form-control">
+                      <input type="hidden" name="old_employee_password" class="form-control" value="<?php echo $employee->password; ?>">
                     </div>
                   </div>
                   <br>

@@ -8,7 +8,7 @@ check_login();
 //Add Staff
 if (isset($_POST['addEmployee'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone']) || empty($_POST['employee_address'])) {
+  if (empty($_POST["employee_code"]) || empty($_POST["employee_name"]) || empty($_POST['employee_email']) || empty($_POST['employee_dob']) || empty($_POST['employee_phone']) || empty($_POST['employee_password'])) {
     $err = "Blank Values Can't Be Accepted";
   } else {
     $employee_code = $_POST['employee_code'];
@@ -18,17 +18,17 @@ if (isset($_POST['addEmployee'])) {
     $employee_email = $_POST['employee_email'];
     $employee_dob = $_POST['employee_dob'];
     $employee_phone = $_POST['employee_phone'];
-    $employee_address = $_POST['employee_address'];
+    $employee_password = password_hash($_POST['employee_password'], PASSWORD_DEFAULT);
 
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO employees (id, name, gender, dob, pos_id, phone, address, email) VALUES(?,?,?,?,?,?,?,?)";
+    $postQuery = "INSERT INTO employees (id, name, gender, dob, pos_id, phone, password, email) VALUES(?,?,?,?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssssss', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_address, $employee_email);
+    $rc = $postStmt->bind_param('ssssssss', $employee_code, $employee_name, $employee_gender, $employee_dob, $employee_position, $employee_phone, $employee_password, $employee_email);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
-      $success = "Employee Has Been Added" && header("refresh:1; url=employee.php");
+      $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
     } else {
       $err = "Please Try Again Or Try Later";
     }
@@ -116,8 +116,8 @@ require_once('partials/_head.php');
                     <input type="phone" name="employee_phone" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
-                    <label>Address</label>
-                    <textarea type="date" name="employee_address" class="form-control"></textarea>
+                    <label>Create Password</label>
+                    <input type="text" name="employee_password" class="form-control" value="">
                   </div>
                 </div>
                 <br>

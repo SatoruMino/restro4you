@@ -8,24 +8,32 @@ check_login();
 //Add Customer
 if (isset($_POST['updateCustomer'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["customer_phoneno"]) || empty($_POST["customer_name"]) || empty($_POST['customer_email']) || empty($_POST['customer_password'])) {
+  if (empty($_POST["customer_phone"]) || empty($_POST["customer_name"]) || empty($_POST['customer_email']) || empty($_POST['customer_password']) || empty($_POST['customer_address'])) {
     $err = "Blank Values Not Accepted";
   } else {
     $customer_name = $_POST['customer_name'];
-    $customer_phoneno = $_POST['customer_phoneno'];
+    $customer_phone = $_POST['customer_phone'];
     $customer_email = $_POST['customer_email'];
-    $customer_password = sha1(md5($_POST['customer_password'])); //Hash This 
+    $customer_address = $_POST['customer_address'];
+    $customer_photo = $_FILES['customer_photo']['name'];
+    $old_customer_photo = $_POST['old_customer_photo'];
+    if ($customer_photo) {
+      move_uploaded_file($_FILES["customer_photo"]["tmp_name"], "assets/img/customers/" . $_FILES["customer_photo"]["name"]);
+    } else {
+      $customer_photo = $old_customer_photo;
+    }
+    $customer_password = password_hash($_POST['customer_password'], PASSWORD_DEFAULT); //Hash This 
     $update = $_GET['update'];
 
     //Insert Captured information to a database table
-    $postQuery = "UPDATE rpos_customers SET customer_name =?, customer_phoneno =?, customer_email =?, customer_password =? WHERE  customer_id =?";
+    $postQuery = "UPDATE customers SET name =?, phone =?,  address =?, photo =?, password =?, email =? WHERE  id =?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssss', $customer_name, $customer_phoneno, $customer_email, $customer_password, $update);
+    $rc = $postStmt->bind_param('sssssss', $customer_name, $customer_phone, $customer_address, $customer_photo, $customer_password, $customer_email, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
-      $success = "Customer Added" && header("refresh:1; url=customes.php");
+      $success = "Customer Has Been Updated" && header("refresh:1; url=customers.php");
     } else {
       $err = "Please Try Again Or Try Later";
     }
@@ -45,7 +53,7 @@ require_once('partials/_head.php');
     <?php
     require_once('partials/_topnav.php');
     $update = $_GET['update'];
-    $ret = "SELECT * FROM  rpos_customers WHERE customer_id = '$update' ";
+    $ret = "SELECT * FROM  customers WHERE id = '$update' ";
     $stmt = $mysqli->prepare($ret);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -69,25 +77,37 @@ require_once('partials/_head.php');
                 <h3>Please Fill All Fields</h3>
               </div>
               <div class="card-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                   <div class="form-row">
                     <div class="col-md-6">
-                      <label>Customer Name</label>
-                      <input type="text" name="customer_name" value="<?php echo $cust->customer_name; ?>" class="form-control">
+                      <label>Name</label>
+                      <input type="text" name="customer_name" class="form-control" value="<?php echo $cust->name; ?>">
                     </div>
                     <div class="col-md-6">
-                      <label>Customer Phone Number</label>
-                      <input type="text" name="customer_phoneno" value="<?php echo $cust->customer_phoneno; ?>" class="form-control" value="">
+                      <label>Email</label>
+                      <input type="email" name="customer_email" class="form-control" value="<?php echo $cust->email; ?>">
                     </div>
                   </div>
                   <hr>
                   <div class="form-row">
                     <div class="col-md-6">
-                      <label>Customer Email</label>
-                      <input type="email" name="customer_email" value="<?php echo $cust->customer_email; ?>" class="form-control" value="">
+                      <label>Phone</label>
+                      <input type="phone" name="customer_phone" class="form-control" value="<?php echo $cust->phone; ?>">
                     </div>
                     <div class="col-md-6">
-                      <label>Customer Password</label>
+                      <label>Address</label>
+                      <textarea name="customer_address" class="form-control" value=""><?php echo $cust->address; ?></textarea>
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="form-row">
+                    <div class="col-md-6">
+                      <label>Photo</label>
+                      <input type="file" name="customer_photo" class="btn btn-outline-success form-control" value="">
+                      <input type="hidden" name="old_customer_photo" value="<?php echo $cust->photo; ?>">
+                    </div>
+                    <div class="col-md-6">
+                      <label>Create Password</label>
                       <input type="password" name="customer_password" class="form-control" value="">
                     </div>
                   </div>
