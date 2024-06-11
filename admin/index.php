@@ -5,15 +5,16 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
   $email = $_POST['email'];
   $password = $_POST['password'];
-  $stm = $pdo->prepare('SELECT * FROM users WHERE email = :email');
+  $stm = $pdo->prepare('SELECT * FROM admins WHERE email = :email');
   $stm->bindParam(':email', $email, PDO::PARAM_STR);
   $stm->execute();
   $result = $stm->fetch(PDO::FETCH_OBJ);
   if ($result) {
     $hashedPass = $result->password;
     if (password_verify($password, $hashedPass)) {
-      $role = $result->role;
       $_SESSION['adminId'] = $result->id;
+      header('Location: dashboard.php');
+      exit();
     } else {
       $error = 'Incorrect Password!';
     }

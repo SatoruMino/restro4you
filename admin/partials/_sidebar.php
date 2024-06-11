@@ -1,7 +1,7 @@
 <?php
-$userId = $_SESSION['userId'];
+$userId = $_SESSION['adminId'];
 //$login_id = $_SESSION['login_id'];
-$sql = "SELECT * FROM  users  WHERE id = '$userId'";
+$sql = "SELECT * FROM  admins  WHERE id = '$userId'";
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();
 $res = $stmt->get_result();
