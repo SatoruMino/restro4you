@@ -7,23 +7,21 @@ include('config/code-generator.php');
 check_login();
 if (isset($_POST['addProduct'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["prod_code"]) || empty($_POST["prod_name"]) || empty($_POST['prod_cate']) || empty($_POST['prod_qty']) || empty($_POST['prod_desc']) || empty($_POST['prod_price'])) {
+  if (empty($_POST["prod_code"]) || empty($_POST["prod_name"]) || empty($_POST['prod_cate'])  || empty($_POST['prod_price'])) {
     $err = "Blank Values Not Accepted";
   } else {
     $prod_code  = $_POST['prod_code'];
     $prod_name = $_POST['prod_name'];
     $prod_cate = $_POST['prod_cate'];
-    $prod_qty = $_POST['prod_qty'];
     $prod_img = $_FILES['prod_img']['name'];
     move_uploaded_file($_FILES["prod_img"]["tmp_name"], "assets/img/products/" . $_FILES["prod_img"]["name"]);
-    $prod_desc = $_POST['prod_desc'];
     $prod_price = $_POST['prod_price'];
     //Visit codeastro.com for more projects
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO products (id, name, cate_id, qty, price, description, image ) VALUES(?,?,?,?,?,?,?)";
+    $postQuery = "INSERT INTO products (id, name, cate_id, price, image ) VALUES(?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssss', $prod_code, $prod_name, $prod_cate, $prod_qty, $prod_price, $prod_desc, $prod_img);
+    $rc = $postStmt->bind_param('sssss', $prod_code, $prod_name, $prod_cate, $prod_price, $prod_img);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -91,28 +89,18 @@ require_once('partials/_head.php');
                     </select>
                   </div>
                   <div class="col-md-6">
-                    <label>Quantity</label>
-                    <input type="number" name="prod_qty" class="form-control">
+                    <label>Price</label>
+                    <input type="number" name="prod_price" class="form-control" value="">
                   </div>
                 </div>
                 <hr>
                 <div class="form-row">
-                  <div class="col-md-6">
-                    <label>Price</label>
-                    <input type="number" name="prod_price" class="form-control" value="">
-                  </div>
                   <div class="col-md-6">
                     <label>Image</label>
                     <input type="file" name="prod_img" class="btn btn-outline-success form-control" value="">
                   </div>
                 </div>
                 <hr>
-                <div class="form-row">
-                  <div class="col-md-12">
-                    <label>Description</label>
-                    <textarea rows="5" name="prod_desc" class="form-control" value=""></textarea>
-                  </div>
-                </div>
                 <br>
                 <div class="form-row">
                   <div class="col-md-6">

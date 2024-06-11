@@ -2,12 +2,11 @@
 session_start();
 include('config/config.php');
 include('config/checklogin.php');
-check_login();
 if (isset($_GET['delete'])) {
   $id = intval($_GET['delete']);
-  $adn = "DELETE FROM  products  WHERE  id = ?";
+  $adn = "DELETE FROM products WHERE id = ?";
   $stmt = $mysqli->prepare($adn);
-  $stmt->bind_param('s', $id);
+  $stmt->bind_param('i', $id);
   $stmt->execute();
   $stmt->close();
   if ($stmt) {
@@ -57,15 +56,17 @@ require_once('partials/_head.php');
                     <th scope="col">Image</th>
                     <th scope="col">Code</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Qty</th>
                     <th scope="col">Category</th>
                     <th scope="col">Price</th>
+                    <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead><!-- For more projects: Visit codeastro.com  -->
                 <tbody>
                   <?php
-                  $ret = "SELECT p.*, c.name as cate_name FROM products p INNER JOIN category c ON p.cate_id = c.id";
+                  $ret = "SELECT p.*, c.name AS cate_name 
+                          FROM products p 
+                          INNER JOIN category c ON p.cate_id = c.id;";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
@@ -83,9 +84,9 @@ require_once('partials/_head.php');
                       </td>
                       <td><?php echo $prod->id; ?></td>
                       <td><?php echo $prod->name; ?></td>
-                      <td><?php echo $prod->qty; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
                       <td>$ <?php echo $prod->price; ?></td>
+                      <td>Available</td>
                       <td>
                         <a href="products.php?delete=<?php echo $prod->id; ?>">
                           <button class="btn btn-sm btn-danger">

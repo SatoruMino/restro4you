@@ -123,13 +123,18 @@ while ($user = $res->fetch_object()) {
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="ingredients.php">
+              <i class="bx bx-list-ul text-primary"></i> INGREDIENT
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="imports.php">
               <i class="bx bx-import text-primary"></i> IMPORT
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="payments.php">
-              <i class="bx bxs-credit-card text-primary"></i> PAYMENTS
+              <i class="bx bxs-credit-card text-primary"></i> PAYMENT
             </a>
           </li>
           <li class="nav-item">

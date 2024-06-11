@@ -7,29 +7,27 @@ include('config/code-generator.php');
 check_login();
 if (isset($_POST['updateProduct'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["prod_code"]) || empty($_POST["prod_name"]) || empty($_POST['prod_cate']) || empty($_POST['prod_qty']) || empty($_POST['prod_desc']) || empty($_POST['prod_price'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['price'])) {
     $err = "Blank Values Not Accepted";
   } else {
     $update = $_GET['update'];
-    $prod_code  = $_POST['prod_code'];
-    $prod_name = $_POST['prod_name'];
-    $prod_cate = $_POST['prod_cate'];
-    $prod_qty = $_POST['prod_qty'];
-    $prod_img = $_FILES['prod_img']['name'];
-    $old_prod_img = $_POST['old_prod_img'];
-    if ($prod_img) {
-      move_uploaded_file($_FILES["prod_img"]["tmp_name"], "assets/img/products/" . $_FILES["prod_img"]["name"]);
+    $code  = $_POST['code'];
+    $name = $_POST['name'];
+    $cate = $_POST['cate'];
+    $img = $_FILES['img']['name'];
+    $old_img = $_POST['old_img'];
+    if ($img) {
+      move_uploaded_file($_FILES["img"]["tmp_name"], "assets/img/products/" . $_FILES["img"]["name"]);
     } else {
-      $prod_img = $old_prod_img;
+      $img = $old_img;
     }
-    $prod_desc = $_POST['prod_desc'];
-    $prod_price = $_POST['prod_price'];
+    $price = $_POST['price'];
 
     //Insert Captured information to a database table
-    $postQuery = "UPDATE products SET id =?, name =?, cate_id =?, qty =?, price =?, description =?, image =? WHERE id = ?";
+    $postQuery = "UPDATE products SET id =?, name =?, cate_id =?, price =?, image =? WHERE id = ?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssssss', $prod_code, $prod_name, $prod_cate, $prod_qty, $prod_price, $prod_desc, $prod_img,  $update);
+    $rc = $postStmt->bind_param('ssssss', $code, $name, $cate, $price, $img, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -70,6 +68,7 @@ require_once('partials/_head.php');
       <!-- Page content -->
       <div class="container-fluid mt--8">
         <!-- Table -->
+        <!-- #endregion -->
         <div class="row">
           <div class="col">
             <div class="card shadow">
@@ -81,18 +80,18 @@ require_once('partials/_head.php');
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Code</label>
-                      <input type="text" name="prod_code" value="<?php echo $prod->id ?>" class="form-control" value="">
+                      <input type="text" name="code" value="<?php echo $prod->id ?>" class="form-control" value="">
                     </div>
                     <div class="col-md-6">
                       <label>Name</label>
-                      <input type="text" name="prod_name" class="form-control" value="<?php echo $prod->name ?>">
+                      <input type="text" name="name" class="form-control" value="<?php echo $prod->name ?>">
                     </div>
                   </div>
                   <hr><!-- For more projects: Visit codeastro.com  -->
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Category</label>
-                      <select class="form-control" name="prod_cate">
+                      <select class="form-control" name="cate">
                         <?php
                         $stmt = $mysqli->prepare("SELECT * FROM category");
                         $stmt->execute();
@@ -103,29 +102,19 @@ require_once('partials/_head.php');
                       </select>
                     </div>
                     <div class="col-md-6">
-                      <label>Quantity</label>
-                      <input type="number" name="prod_qty" class="form-control" value="<?php echo $prod->qty ?>">
+                      <label>Price</label>
+                      <input type="number" name="price" class="form-control" value="<?php echo $prod->price ?>">
                     </div>
                   </div>
                   <hr>
                   <div class="form-row">
-                    <div class="col-md-6">
-                      <label>Price</label>
-                      <input type="number" name="prod_price" class="form-control" value="<?php echo $prod->price ?>">
-                    </div>
                     <div class="col-md-6">
                       <label>Image</label>
-                      <input type="file" name="prod_img" class="btn btn-outline-success form-control" value="">
-                      <input type="hidden" name="old_prod_img" value="<?php echo $prod->image ?>">
+                      <input type="file" name="img" class="btn btn-outline-success form-control" value="">
+                      <input type="hidden" name="old_img" value="<?php echo $prod->image ?>">
                     </div>
                   </div>
                   <hr>
-                  <div class="form-row">
-                    <div class="col-md-12">
-                      <label>Description</label>
-                      <textarea rows="5" name="prod_desc" class="form-control"><?php echo $prod->description ?></textarea>
-                    </div>
-                  </div>
                   <br>
                   <div class="form-row">
                     <div class="col-md-6">

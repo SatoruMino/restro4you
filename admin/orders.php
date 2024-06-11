@@ -20,7 +20,7 @@ require_once('partials/_head.php');
     ?>
     <!-- Header -->
     <div style="background-image: url(assets/img/theme/restro00.jpg); background-size: cover;" class="header  pb-8 pt-5 pt-md-8">
-    <span class="mask bg-gradient-dark opacity-8"></span>
+      <span class="mask bg-gradient-dark opacity-8"></span>
       <div class="container-fluid">
         <div class="header-body">
         </div>
@@ -42,13 +42,15 @@ require_once('partials/_head.php');
                     <th scope="col"><b>Image</b></th>
                     <th scope="col"><b>Product Code</b></th>
                     <th scope="col"><b>Name</b></th>
+                    <th scope="col"><b>Category</b></th>
                     <th scope="col"><b>Price</b></th>
+                    <th scope="col"><b>Status</b></th>
                     <th scope="col"><b>Action</b></th>
                   </tr>
                 </thead><!-- For more projects: Visit codeastro.com  -->
                 <tbody>
                   <?php
-                  $ret = "SELECT * FROM  rpos_products ";
+                  $ret = "SELECT p.*, c.name as cate_name FROM products p INNER JOIN category c ON p.cate_id = c.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
@@ -57,19 +59,21 @@ require_once('partials/_head.php');
                     <tr>
                       <td>
                         <?php
-                        if ($prod->prod_img) {
-                          echo "<img src='assets/img/products/$prod->prod_img' height='60' width='60 class='img-thumbnail'>";
+                        if ($prod->image) {
+                          echo "<img src='assets/img/products/$prod->image' height='60' width='60 class='img-thumbnail'>";
                         } else {
                           echo "<img src='assets/img/products/default.jpg' height='60' width='60 class='img-thumbnail'>";
                         }
 
                         ?>
                       </td>
-                      <td><?php echo $prod->prod_code; ?></td>
-                      <td><?php echo $prod->prod_name; ?></td>
-                      <td>$ <?php echo $prod->prod_price; ?></td>
+                      <td><?php echo $prod->id; ?></td>
+                      <td><?php echo $prod->name; ?></td>
+                      <td><?php echo $prod->cate_name; ?></td>
+                      <td>$ <?php echo $prod->price; ?></td>
+                      <td>$ <?php echo $prod->status; ?></td>
                       <td>
-                        <a href="make_oder.php?prod_id=<?php echo $prod->prod_id; ?>&prod_name=<?php echo $prod->prod_name; ?>&prod_price=<?php echo $prod->prod_price; ?>">
+                        <a href="make_oder.php?prod_id=<?php echo $prod->prod_id; ?>&prod_name=<?php echo $prod->name; ?>&prod_price=<?php echo $prod->prod_price; ?>">
                           <button class="btn btn-sm btn-warning">
                             <i class="fas fa-cart-plus"></i>
                             Place Order
@@ -96,4 +100,5 @@ require_once('partials/_head.php');
   ?>
 </body>
 <!-- For more projects: Visit codeastro.com  -->
+
 </html>
