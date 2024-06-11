@@ -1,38 +1,3 @@
-<?php
-session_start();
-include("configs/pdoconfig.php");
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $stm = $pdo->prepare('SELECT * FROM users WHERE email = :email');
-    $stm->bindParam(':email', $email, PDO::PARAM_STR);
-    $stm->execute();
-    $result = $stm->fetch(PDO::FETCH_OBJ);
-    if ($result) {
-        $hashedPass = $result->password;
-        if (password_verify($password, $hashedPass)) {
-            $role = $result->role;
-            $_SESSION['userId'] = $result->id;
-            if ($role == 'admin') {
-                header('Location: admin/index.php');
-            } else if ($role == 'cashier') {
-                header('Location: cashier/index.php');
-            } else {
-                header('Location: customer/index.php');
-            }
-        } else {
-            $error = 'Incorrect Password!';
-        }
-    } else {
-        $error = 'User has not been registered';
-    }
-}
-
-
-
-?>
-
 <!DOCTYPE html>
 <!-- Coding By CodingNepal - codingnepalweb.com -->
 <html lang="en" dir="ltr">
@@ -63,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
     </div>
 </div>
-<?php require_once("partial/_script.php"); ?>
 </body>
 
 </html>
