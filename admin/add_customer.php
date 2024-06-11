@@ -8,24 +8,36 @@ check_login();
 //Add Customer
 if (isset($_POST['addCustomer'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["customer_code"]) || empty($_POST["customer_name"]) || empty($_POST['customer_phone']) || empty($_POST['customer_address'] || empty($_POST['customer_email']) || empty($_POST['customer_password']))) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['phone']) || empty($_POST['address'] || empty($_POST['email']) || empty($_POST['password']))) {
     $err = "Blank Values Not Accepted";
   } else {
-    $customer_name = $_POST['customer_name'];
-    $customer_email = $_POST['customer_email'];
-    $customer_phone = $_POST['customer_phone'];
-    $customer_photo = $_FILES['customer_photo']['name'];
-    move_uploaded_file($_FILES["customer_photo"]["tmp_name"], "assets/img/customers/" . $_FILES["customer_photo"]["name"]);
-    $customer_address = $_POST['customer_address'];
-    $customer_password = password_hash($_POST['customer_password'], PASSWORD_DEFAULT);
-    $customer_code = $_POST['customer_code'];
-
+    $code = $_POST['code'];
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $photo = $_FILES['photo']['name'];
+    move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/customers/" . $_FILES["photo"]["name"]);
+    $address = $_POST['address'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO customers (id, name, phone, address, photo, password, email) VALUES(?,?,?,?,?,?,?)";
+    $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'customer')";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssss', $customer_code, $customer_name, $customer_phone, $customer_address, $customer_photo, $customer_password, $customer_email);
-    $postStmt->execute();
+    $rc = $postStmt->bind_param('ss', $email, $password);
+    if ($postStmt->execute()) {
+      $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
+      if ($result) {
+        $row = $result->fetch_assoc();
+        $u_id = $row['id'];
+        $custmt = $mysqli->prepare('INSERT INTO customers(id, name, phone, address, photo, u_id) VALUE (?,?,?,?,?,?)');
+        $custmt->bind_param('ssssss', $code, $name, $phone, $address, $photo, $u_id);
+        if ($custmt->execute()) {
+          $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
+        } else {
+          $err = "Please Try Again Or Try Later";
+        }
+      }
+    }
     //declare a varible which will be passed to alert function
     if ($postStmt) {
       $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
@@ -72,23 +84,23 @@ require_once('partials/_head.php');
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Name</label>
-                    <input type="text" name="customer_name" class="form-control">
-                    <input type="hidden" name="customer_code" value="<?php echo $cus_id; ?>" class="form-control">
+                    <input type="text" name="name" class="form-control">
+                    <input type="hidden" name="code" value="<?php echo $cus_id; ?>" class="form-control">
                   </div>
                   <div class="col-md-6">
                     <label>Email</label>
-                    <input type="email" name="customer_email" class="form-control" value="">
+                    <input type="email" name="email" class="form-control" value="">
                   </div>
                 </div>
                 <hr>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Phone</label>
-                    <input type="phone" name="customer_phone" class="form-control" value="">
+                    <input type="phone" name="phone" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
                     <label>Address</label>
-                    <textarea name="customer_address" class="form-control" value=""></textarea>
+                    <textarea name="address" class="form-control" value=""></textarea>
                   </div>
 
                 </div>
@@ -96,11 +108,11 @@ require_once('partials/_head.php');
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Photo</label>
-                    <input type="file" name="customer_photo" class="btn btn-outline-success form-control" value="">
+                    <input type="file" name="photo" class="btn btn-outline-success form-control" value="">
                   </div>
                   <div class="col-md-6">
                     <label>Create Password</label>
-                    <input type="password" name="customer_password" class="form-control" value="">
+                    <input type="password" name="password" class="form-control" value="">
                   </div>
                 </div>
                 <br><!-- For more projects: Visit codeastro.com  -->

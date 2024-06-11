@@ -8,28 +8,29 @@ check_login();
 //Add Customer
 if (isset($_POST['updateCustomer'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["customer_phone"]) || empty($_POST["customer_name"]) || empty($_POST['customer_email']) || empty($_POST['customer_password']) || empty($_POST['customer_address'])) {
+  if (empty($_POST["name"]) || empty($_POST['phone']) || empty($_POST['address'] || empty($_POST['email']))) {
     $err = "Blank Values Not Accepted";
   } else {
-    $customer_name = $_POST['customer_name'];
-    $customer_phone = $_POST['customer_phone'];
-    $customer_email = $_POST['customer_email'];
-    $customer_address = $_POST['customer_address'];
-    $customer_photo = $_FILES['customer_photo']['name'];
-    $old_customer_photo = $_POST['old_customer_photo'];
+    $uid = $_POST['u_id'];
+    $name = $_POST['name'];
+    $phone = $_POST['phone'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+    $photo = $_FILES['photo']['name'];
+    $old_photo = $_POST['old_photo'];
     if ($customer_photo) {
-      move_uploaded_file($_FILES["customer_photo"]["tmp_name"], "assets/img/customers/" . $_FILES["customer_photo"]["name"]);
+      move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/customers/" . $_FILES["photo"]["name"]);
     } else {
-      $customer_photo = $old_customer_photo;
+      $customer_photo = $old_photo;
     }
-    $customer_password = password_hash($_POST['customer_password'], PASSWORD_DEFAULT); //Hash This 
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); //Hash This 
     $update = $_GET['update'];
 
     //Insert Captured information to a database table
-    $postQuery = "UPDATE customers SET name =?, phone =?,  address =?, photo =?, password =?, email =? WHERE  id =?";
+    $postQuery = "CALL updateCustomerDetail(?,?,?,?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssss', $customer_name, $customer_phone, $customer_address, $customer_photo, $customer_password, $customer_email, $update);
+    $rc = $postStmt->bind_param('ssssssss', $uid, $name, $phone, $address, $photo, $email, $password, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -53,7 +54,7 @@ require_once('partials/_head.php');
     <?php
     require_once('partials/_topnav.php');
     $update = $_GET['update'];
-    $ret = "SELECT * FROM  customers WHERE id = '$update' ";
+    $ret = "SELECT c.*, u.email AS email, u.password AS password FROM customers c INNER JOIN users u ON c.u_id = u.id WHERE c.id = '$update'";
     $stmt = $mysqli->prepare($ret);
     $stmt->execute();
     $res = $stmt->get_result();
@@ -81,34 +82,36 @@ require_once('partials/_head.php');
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Name</label>
-                      <input type="text" name="customer_name" class="form-control" value="<?php echo $cust->name; ?>">
+                      <input type="text" name="name" class="form-control" value="<?php echo $cust->name; ?>">
+                      <input type="hidden" name="u_id" class="form-control" value="<?php echo $cust->u_id; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Email</label>
-                      <input type="email" name="customer_email" class="form-control" value="<?php echo $cust->email; ?>">
+                      <input type="email" name="email" class="form-control" value="<?php echo $cust->email; ?>">
                     </div>
                   </div>
                   <hr>
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Phone</label>
-                      <input type="phone" name="customer_phone" class="form-control" value="<?php echo $cust->phone; ?>">
+                      <input type="phone" name="phone" class="form-control" value="<?php echo $cust->phone; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Address</label>
-                      <textarea name="customer_address" class="form-control" value=""><?php echo $cust->address; ?></textarea>
+                      <textarea name="address" class="form-control" value=""><?php echo $cust->address; ?></textarea>
                     </div>
                   </div>
                   <hr>
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Photo</label>
-                      <input type="file" name="customer_photo" class="btn btn-outline-success form-control" value="">
-                      <input type="hidden" name="old_customer_photo" value="<?php echo $cust->photo; ?>">
+                      <input type="file" name="photo" class="btn btn-outline-success form-control" value="">
+                      <input type="hidden" name="old_photo" value="<?php echo $cust->photo; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Create Password</label>
-                      <input type="password" name="customer_password" class="form-control" value="">
+                      <input type="password" name="password" class="form-control" value="">
+                      <input type="hidden" name="old_password" class="form-control" value="<?php echo $cust->password; ?>">
                     </div>
                   </div>
                   <br>

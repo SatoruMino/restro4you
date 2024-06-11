@@ -77,7 +77,7 @@ require_once('partials/_head.php');
                       <td><?php echo $emp->phone; ?></td>
                       <td><?php echo $emp->emp_email; ?></td>
                       <td>
-                        <a href="employee.php?delete=<?php echo $emp->id; ?>">
+                        <a href="employees.php?delete=<?php echo $emp->id; ?>">
                           <button class="btn btn-sm btn-danger">
                             <i class="fas fa-trash"></i>
                             Delete

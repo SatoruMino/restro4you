@@ -50,7 +50,7 @@ require_once('partials/_head.php');
     <?php
     require_once('partials/_topnav.php');
     $update = $_GET['update'];
-    $ret = "SELECT e.*, u.id AS u_id, u.email AS email, u.password AS password FROM employees e INNER JOIN users u ON e.u_id = u.id WHERE e.id = '$update'";
+    $ret = "SELECT e.*, u.email AS email, u.password AS password FROM employees e INNER JOIN users u ON e.u_id = u.id WHERE e.id = '$update'";
     $stmt = $mysqli->prepare($ret);
     $stmt->execute();
     $res = $stmt->get_result();

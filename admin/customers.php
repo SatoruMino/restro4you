@@ -55,11 +55,11 @@ require_once('partials/_head.php');
               <table class="table align-items-center table-flush">
                 <thead class="thead-light">
                   <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Email</th>
+                    <th scope="col">CODE</th>
+                    <th scope="col">NAME</th>
                     <th scope="col">Phone</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Actions</th>
+                    <th scope="col">ADDRESS</th>
+                    <th scope="col">ACTIONS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -71,8 +71,8 @@ require_once('partials/_head.php');
                   while ($cust = $res->fetch_object()) {
                   ?>
                     <tr>
+                      <td><?php echo $cust->id; ?></td>
                       <td><?php echo $cust->name; ?></td>
-                      <td><?php echo $cust->email; ?></td>
                       <td><?php echo $cust->phone; ?></td>
                       <td><?php echo $cust->address; ?></td>
                       <td>
