@@ -93,6 +93,11 @@ while ($user = $res->fetch_object()) {
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="category.php">
+              <i class="bx bx-category text-primary"></i> CATEGORY
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="employees.php">
               <i class="bx bxs-group text-primary"></i> EMPLOYEE
             </a>
@@ -103,6 +108,11 @@ while ($user = $res->fetch_object()) {
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="suppliers.php">
+              <i class="bx bx-user-plus text-primary"></i> SUPPLIER
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="products.php">
               <i class="bx bx-food-menu text-primary"></i>FOOD
             </a>
@@ -110,6 +120,11 @@ while ($user = $res->fetch_object()) {
           <li class="nav-item">
             <a class="nav-link" href="orders.php">
               <i class="bx bx-cart text-primary"></i> ORDERS
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="imports.php">
+              <i class="bx bx-import text-primary"></i> IMPORT
             </a>
           </li>
           <li class="nav-item">

@@ -55,16 +55,17 @@ require_once('partials/_head.php');
                 <thead class="thead-light">
                   <tr>
                     <th scope="col">Image</th>
-                    <th scope="col">Product Code</th>
+                    <th scope="col">Code</th>
                     <th scope="col">Name</th>
                     <th scope="col">Qty</th>
+                    <th scope="col">Category</th>
                     <th scope="col">Price</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead><!-- For more projects: Visit codeastro.com  -->
                 <tbody>
                   <?php
-                  $ret = "SELECT * FROM  products ";
+                  $ret = "SELECT p.*, c.name as cate_name FROM products p INNER JOIN category c ON p.cate_id = c.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
@@ -78,12 +79,12 @@ require_once('partials/_head.php');
                         } else {
                           echo "<img src='assets/img/products/default.jpg' height='60' width='60 class='img-thumbnail'>";
                         }
-
                         ?>
                       </td>
                       <td><?php echo $prod->id; ?></td>
                       <td><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->qty; ?></td>
+                      <td><?php echo $prod->cate_name; ?></td>
                       <td>$ <?php echo $prod->price; ?></td>
                       <td>
                         <a href="products.php?delete=<?php echo $prod->id; ?>">
