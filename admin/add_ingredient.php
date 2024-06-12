@@ -14,7 +14,6 @@ if (isset($_POST['addIngredient'])) {
         $name = $_POST['name'];
         $unit = $_POST['unit'];
         $qty = $_POST['qty'];
-
         //Insert Captured information to a database table
         $postQuery = "INSERT INTO ingredients (name, unit, qty) VALUES(?,?,?)";
         $postStmt = $mysqli->prepare($postQuery);

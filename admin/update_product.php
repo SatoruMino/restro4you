@@ -22,12 +22,21 @@ if (isset($_POST['updateProduct'])) {
       $img = $old_img;
     }
     $price = $_POST['price'];
-
+    $ingredients = $_POST['ingredients'];
+    $qty = $_POST['qty'];
+    $recipe = array();
+    for ($i = 0; $i < count($ingredients); $i++) {
+      $recipe[] = array(
+        'id' => $ingredients[$i],
+        'qty' => $qty[$i],
+      );
+    }
+    $recipe_json = json_encode($recipe);
     //Insert Captured information to a database table
-    $postQuery = "UPDATE products SET id =?, name =?, cate_id =?, price =?, image =? WHERE id = ?";
+    $postQuery = "UPDATE products SET id =?, name =?, cate_id =?, price =?, image =?, recipe =? WHERE id = ?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('ssssss', $code, $name, $cate, $price, $img, $update);
+    $rc = $postStmt->bind_param('sssssss', $code, $name, $cate, $price, $img, $recipe_json, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -40,7 +49,7 @@ if (isset($_POST['updateProduct'])) {
 require_once('partials/_head.php');
 ?>
 
-<body>
+<>
   <!-- Sidenav -->
   <?php
   require_once('partials/_sidebar.php');
@@ -80,11 +89,11 @@ require_once('partials/_head.php');
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Code</label>
-                      <input type="text" name="code" value="<?php echo $prod->id ?>" class="form-control" value="">
+                      <input type="text" name="code" value="<?php echo $prod->id; ?>" class="form-control" value="<?php echo $prod->id; ?>">
                     </div>
                     <div class="col-md-6">
                       <label>Name</label>
-                      <input type="text" name="name" class="form-control" value="<?php echo $prod->name ?>">
+                      <input type="text" name="name" class="form-control" value="<?php echo $prod->name; ?>">
                     </div>
                   </div>
                   <hr><!-- For more projects: Visit codeastro.com  -->
@@ -103,7 +112,7 @@ require_once('partials/_head.php');
                     </div>
                     <div class="col-md-6">
                       <label>Price</label>
-                      <input type="number" name="price" class="form-control" value="<?php echo $prod->price ?>">
+                      <input type="number" name="price" class="form-control" step="0.01" value="<?php echo $prod->price; ?>">
                     </div>
                   </div>
                   <hr>
@@ -111,10 +120,43 @@ require_once('partials/_head.php');
                     <div class="col-md-6">
                       <label>Image</label>
                       <input type="file" name="img" class="btn btn-outline-success form-control" value="">
-                      <input type="hidden" name="old_img" value="<?php echo $prod->image ?>">
+                      <input type="hidden" name="old_img" class="btn btn-outline-success form-control" value="<?php echo $prod->image ?>">
                     </div>
                   </div>
-                  <hr>
+                  <br>
+                  <div id="ingredients">
+                    <?php
+                    $recipes = json_decode($prod->recipe, true);
+                    foreach ($recipes as $key => $rec) { ?>
+                      <div class="form-row">
+                        <div class="col-md-6">
+                          <label>Ingredient:</label>
+                          <select class="form-control" name="ingredients[]">
+                            <?php
+                            $stmt = $mysqli->prepare("SELECT * FROM ingredients");
+                            $stmt->execute();
+                            $result = $stmt->get_result();
+                            while ($ing = $result->fetch_object()) { ?>
+                              <option value="<?php echo $ing->id; ?>" <?php echo ($ing->id == $rec['id']) ? 'selected' : null; ?>><?php echo $ing->name; ?></option>
+                            <?php } ?>
+                          </select>
+                        </div>
+                        <div class="col-md-5">
+                          <label>Quantity</label>
+                          <input type="number" class="form-control" name="qty[]" step="0.01" value="<?php echo $rec['qty']; ?>">
+                        </div>
+                        <div class="col-md-1 text-danger">
+                          <i class="bx bx-message-square-x" role="button" onclick="removeIngredient(this)"></i>
+                        </div>
+                      </div>
+                      <br>
+                    <?php } ?>
+                  </div>
+                  <div class="form-row">
+                    <div class="col-md-6">
+                      <button type="button" name="addIngredients" onclick="addIngredientField()" class="btn btn-outline-success">Add Ingredients</button>
+                    </div>
+                  </div>
                   <br>
                   <div class="form-row">
                     <div class="col-md-6">
@@ -137,6 +179,55 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
-</body>
+  <script>
+    let ingredientCount = <?php echo count($recipes); ?>;
 
-</html>
+    function removeIngredient(button) {
+      // Get the parent form row element of the remove button
+      const formRow = button.closest('.form-row');
+      // Get the <br> element next to the form row
+      const brElement = formRow.nextElementSibling;
+
+      // Remove the entire form row from the DOM
+      formRow.remove();
+      // Remove the <br> element if it exists and if it's directly after the form row
+      if (brElement && brElement.tagName === 'BR' && brElement.previousElementSibling === formRow) {
+        brElement.remove();
+      }
+    }
+
+    function addIngredientField() {
+      ingredientCount++;
+
+      const div = document.createElement('div');
+      div.id = 'ingredient_' + ingredientCount;
+      div.classList.add("form-row");
+      div.innerHTML = `
+      <div class="col-md-6">
+        <label>Ingredient:</label>
+        <select id="ingredient_${ingredientCount}" class="form-control form-select-lg mb-3" aria-label="Large select example" name="ingredients[]" id="ingredients_${ingredientCount}">
+          <?php
+          $ret = "SELECT * FROM ingredients ";
+          $stmt = $mysqli->prepare($ret);
+          $stmt->execute();
+          $res = $stmt->get_result();
+          while ($ingredient = $res->fetch_object()) {
+          ?>
+          <option value="<?php echo $ingredient->id; ?>"><?php echo $ingredient->name; ?></option>
+          <?php } ?>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label>Quantity</label>
+        <input type="number" class="form-control" name="qty[]" id="qty_${ingredientCount}"> 
+      </div>
+      <div class="col-md-1 text-danger">
+        <i class="bx bx-message-square-x" role="button" onclick="removeIngredient(this)"></i>
+      </div>
+    `;
+      document.getElementById('ingredients').appendChild(div);
+    }
+  </script>
+  </body>
+
+  </html>

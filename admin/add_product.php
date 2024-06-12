@@ -22,7 +22,7 @@ if (isset($_POST['addProduct'])) {
     $qty = $_POST['qty'];
     $recipe = array();
     for ($i = 0; $i < count($ingredients); $i++) {
-      $recipe[] = array(
+      $recipe = array(
         'id' => $ingredients[$i],
         'qty' => $qty[$i],
       );
@@ -143,6 +143,20 @@ require_once('partials/_head.php');
   <script>
     let ingredientCount = 0;
 
+    function removeIngredient(button) {
+      // Get the parent form row element of the remove button
+      const formRow = button.closest('.form-row');
+      // Get the <br> element next to the form row
+      const brElement = formRow.nextElementSibling;
+
+      // Remove the entire form row from the DOM
+      formRow.remove();
+      // Remove the <br> element if it exists and if it's directly after the form row
+      if (brElement && brElement.tagName === 'BR' && brElement.previousElementSibling === formRow) {
+        brElement.remove();
+      }
+    }
+
     function addIngredientField() {
       ingredientCount++;
 
@@ -150,27 +164,29 @@ require_once('partials/_head.php');
       div.id = 'ingredient_' + ingredientCount;
       div.classList.add("form-row");
       div.innerHTML = `
-                  <div class="col-md-6">
-                      <label>Ingredient:</label>
-                      <select id="ingredient_${ingredientCount}" class="form-control form-select-lg mb-3" aria-label="Large select example" name="ingredients[]" id="ingredients">
-                        <?php
-                        $ret = "SELECT * FROM  ingredients ";
-                        $stmt = $mysqli->prepare($ret);
-                        $stmt->execute();
-                        $res = $stmt->get_result();
-                        while ($ingredient = $res->fetch_object()) {
-                        ?>
-                        <option value="<?php echo $ingredient->id; ?>"><?php echo $ingredient->name; ?></option>
-                        <?php } ?>
-                      </select>
-                  </div>
-                  <div class="col-md-6">
-                      <label>Quantity</label>
-                      <input type="number" class="form-control" name = "qty[]" id="qty_${ingredientCount}">
-                  </div>
-            `;
+      <div class="col-md-6">
+        <label>Ingredient:</label>
+        <select id="ingredient_${ingredientCount}" class="form-control form-select-lg mb-3" aria-label="Large select example" name="ingredients[]" id="ingredients_${ingredientCount}">
+          <?php
+          $ret = "SELECT * FROM ingredients ";
+          $stmt = $mysqli->prepare($ret);
+          $stmt->execute();
+          $res = $stmt->get_result();
+          while ($ingredient = $res->fetch_object()) {
+          ?>
+          <option value="<?php echo $ingredient->id; ?>"><?php echo $ingredient->name; ?></option>
+          <?php } ?>
+        </select>
+      </div>
+      <div class="col-md-5">
+        <label>Quantity</label>
+        <input type="number" class="form-control" name="qty[]" id="qty_${ingredientCount}"> 
+      </div>
+      <div class="col-md-1 text-danger">
+        <i class="bx bx-message-square-x" role="button" onclick="removeIngredient(this)"></i>
+      </div>
+    `;
       document.getElementById('ingredients').appendChild(div);
-      loadIngredients(ingredientCount);
     }
   </script>
 </body>
