@@ -63,7 +63,7 @@ require_once('partials/_head.php');
                 </thead>
                 <tbody>
                   <?php
-                  $ret = "SELECT * FROM getEmployeeDetail";
+                  $ret = "SELECT e.*, p.name AS position FROM employees e INNER JOIN positions p ON e.pos_id = p.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
@@ -73,7 +73,7 @@ require_once('partials/_head.php');
                       <td><?php echo $emp->id; ?></td>
                       <td><?php echo $emp->name; ?></td>
                       <td><?php echo $emp->gender; ?></td>
-                      <td><?php echo $emp->emp_pos; ?></td>
+                      <td><?php echo $emp->position; ?></td>
                       <td><?php echo $emp->phone; ?></td>
                       <td><?php echo $emp->emp_email; ?></td>
                       <td>

@@ -7,21 +7,33 @@ include('config/code-generator.php');
 check_login();
 if (isset($_POST['addProduct'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["prod_code"]) || empty($_POST["prod_name"]) || empty($_POST['prod_cate'])  || empty($_POST['prod_price'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['cate'])  || empty($_POST['price'])) {
     $err = "Blank Values Not Accepted";
   } else {
-    $prod_code  = $_POST['prod_code'];
-    $prod_name = $_POST['prod_name'];
-    $prod_cate = $_POST['prod_cate'];
-    $prod_img = $_FILES['prod_img']['name'];
-    move_uploaded_file($_FILES["prod_img"]["tmp_name"], "assets/img/products/" . $_FILES["prod_img"]["name"]);
-    $prod_price = $_POST['prod_price'];
+    $code  = $_POST['code'];
+    $name = $_POST['name'];
+    $cate = $_POST['cate'];
+    $img = $_FILES['img']['name'];
+    move_uploaded_file($_FILES["img"]["tmp_name"], "assets/img/products/" . $_FILES["img"]["name"]);
+    $price = $_POST['price'];
+    // Loop through ingredients and quantities
+    // Loop through ingredients and quantities
+    $ingredients = $_POST['ingredients'];
+    $qty = $_POST['qty'];
+    $recipe = array();
+    for ($i = 0; $i < count($ingredients); $i++) {
+      $recipe[] = array(
+        'id' => $ingredients[$i],
+        'qty' => $qty[$i],
+      );
+    }
+    $recipe_json = json_encode($recipe);
     //Visit codeastro.com for more projects
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO products (id, name, cate_id, price, image ) VALUES(?,?,?,?,?)";
+    $postQuery = "INSERT INTO products (id, name, cate_id, price, image, recipe ) VALUES(?,?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssss', $prod_code, $prod_name, $prod_cate, $prod_price, $prod_img);
+    $rc = $postStmt->bind_param('ssssss', $code, $name, $cate, $price, $img, $recipe_json);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -67,18 +79,18 @@ require_once('partials/_head.php');
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Code</label>
-                    <input type="text" name="prod_code" value="<?php echo $alpha; ?>-<?php echo $beta; ?>" class="form-control" value="">
+                    <input type="text" name="code" value="<?php echo $alpha; ?>-<?php echo $beta; ?>" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
                     <label>Name</label>
-                    <input type="text" name="prod_name" class="form-control">
+                    <input type="text" name="name" class="form-control">
                   </div>
                 </div>
                 <hr><!-- For more projects: Visit codeastro.com  -->
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Category</label>
-                    <select class="form-control" name="prod_cate">
+                    <select class="form-control" name="cate">
                       <?php
                       $stmt = $mysqli->prepare("SELECT * FROM category");
                       $stmt->execute();
@@ -90,23 +102,29 @@ require_once('partials/_head.php');
                   </div>
                   <div class="col-md-6">
                     <label>Price</label>
-                    <input type="number" name="prod_price" class="form-control" value="">
+                    <input type="number" name="price" class="form-control" step="0.01" value="">
                   </div>
                 </div>
                 <hr>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Image</label>
-                    <input type="file" name="prod_img" class="btn btn-outline-success form-control" value="">
+                    <input type="file" name="img" class="btn btn-outline-success form-control" value="">
                   </div>
                 </div>
                 <hr>
+                <div id="ingredients"></div>
                 <br>
                 <div class="form-row">
                   <div class="col-md-6">
-                    <input type="submit" name="addProduct" value="Add Product" class="btn btn-success" value="">
+                    <button type="button" name="addIngredients" onclick="addIngredientField()" class="btn btn-outline-success">Add Ingredients</button>
                   </div>
                 </div>
+                <br>
+                <div class="form-row">
+                  <div class="ingredients"></div>
+                </div>
+                <input type="submit" name="addProduct" value="Add Product" class="btn btn-success" value="">
               </form>
             </div>
           </div>
@@ -122,6 +140,39 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
+  <script>
+    let ingredientCount = 0;
+
+    function addIngredientField() {
+      ingredientCount++;
+
+      const div = document.createElement('div');
+      div.id = 'ingredient_' + ingredientCount;
+      div.classList.add("form-row");
+      div.innerHTML = `
+                  <div class="col-md-6">
+                      <label>Ingredient:</label>
+                      <select id="ingredient_${ingredientCount}" class="form-control form-select-lg mb-3" aria-label="Large select example" name="ingredients[]" id="ingredients">
+                        <?php
+                        $ret = "SELECT * FROM  ingredients ";
+                        $stmt = $mysqli->prepare($ret);
+                        $stmt->execute();
+                        $res = $stmt->get_result();
+                        while ($ingredient = $res->fetch_object()) {
+                        ?>
+                        <option value="<?php echo $ingredient->id; ?>"><?php echo $ingredient->name; ?></option>
+                        <?php } ?>
+                      </select>
+                  </div>
+                  <div class="col-md-6">
+                      <label>Quantity</label>
+                      <input type="number" class="form-control" name = "qty[]" id="qty_${ingredientCount}">
+                  </div>
+            `;
+      document.getElementById('ingredients').appendChild(div);
+      loadIngredients(ingredientCount);
+    }
+  </script>
 </body>
 <!-- For more projects: Visit codeastro.com  -->
 

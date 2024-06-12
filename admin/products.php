@@ -58,7 +58,6 @@ require_once('partials/_head.php');
                     <th scope="col">Name</th>
                     <th scope="col">Category</th>
                     <th scope="col">Price</th>
-                    <th scope="col">Status</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead><!-- For more projects: Visit codeastro.com  -->
@@ -86,7 +85,6 @@ require_once('partials/_head.php');
                       <td><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
                       <td>$ <?php echo $prod->price; ?></td>
-                      <td>Available</td>
                       <td>
                         <a href="products.php?delete=<?php echo $prod->id; ?>">
                           <button class="btn btn-sm btn-danger">

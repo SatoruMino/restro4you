@@ -14,12 +14,12 @@ if (isset($_POST['updateIngredient'])) {
         $name = $_POST['name'];
         $unit = $_POST['unit'];
         $qty = $_POST['qty'];
-
+        $update = $_GET['update'];
         //Insert Captured information to a database table
-        $postQuery = "UPDATE ingredients SET name =?, unit =?, qty =?";
+        $postQuery = "UPDATE ingredients SET name =?, unit =?, qty =? WHERE id =?";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('sss', $name, $unit, $qty);
+        $rc = $postStmt->bind_param('ssss', $name, $unit, $qty, $update);
         $postStmt->execute();
         //declare a varible which will be passed to alert function
         if ($postStmt) {

@@ -66,11 +66,12 @@ require_once('partials/_head.php');
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
+                                    $key = 0;
                                     while ($ingred = $res->fetch_object()) {
-                                        $no = 0;
+                                        $key += 1;
                                     ?>
                                         <tr>
-                                            <td><?php echo $no += 1; ?></td>
+                                            <td><?php echo $key; ?></td>
                                             <td><?php echo $ingred->id; ?></td>
                                             <td><?php echo $ingred->name; ?></td>
                                             <td><?php echo $ingred->unit; ?></td>
