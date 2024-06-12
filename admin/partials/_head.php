@@ -58,13 +58,12 @@
     <script>
         function getCustomer(val) {
             $.ajax({
-
                 type: "POST",
                 url: "customer_ajax.php",
-                data: 'custName=' + val,
+                data: 'cust_name=' + val,
                 success: function(data) {
                     //alert(data);
-                    $('#customerID').val(data);
+                    $('#cust_id').val(data);
                 }
             });
 

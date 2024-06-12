@@ -1,15 +1,15 @@
 <?php
 include('config/pdoconfig.php');
 
-if (!empty($_POST["custName"])) {
-    $id = $_POST['custName'];
+if (!empty($_POST["cust_name"])) {
+    $id = $_POST['cust_name'];
     $stmt = $DB_con->prepare("SELECT * FROM  customers WHERE name = :id");
     $stmt->execute(array(':id' => $id));
 ?>
 <?php
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 ?>
-<?php echo htmlentities($row['customer_id']); ?>
+<?php echo htmlentities($row['cust_id']); ?>
 <?php
     }
 }

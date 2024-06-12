@@ -3,9 +3,14 @@ session_start();
 include('config/config.php');
 include('config/checklogin.php');
 check_login();
-
 require_once('partials/_head.php');
 ?>
+<style>
+  .input-no-border {
+    border: none !important;
+    box-shadow: none !important;
+  }
+</style>
 
 <body>
   <!-- Sidenav -->
@@ -44,12 +49,14 @@ require_once('partials/_head.php');
                     <th scope="col"><b>Name</b></th>
                     <th scope="col"><b>Category</b></th>
                     <th scope="col"><b>Price</b></th>
+                    <th scope="col"><b>Qty</b></th>
                     <th scope="col"><b>Status</b></th>
                     <th scope="col"><b>Action</b></th>
                   </tr>
                 </thead><!-- For more projects: Visit codeastro.com  -->
                 <tbody>
                   <?php
+                  $status = "Available";
                   $ret = "SELECT p.*, c.name as cate_name FROM products p INNER JOIN category c ON p.cate_id = c.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
@@ -64,21 +71,43 @@ require_once('partials/_head.php');
                         } else {
                           echo "<img src='assets/img/products/default.jpg' height='60' width='60 class='img-thumbnail'>";
                         }
-
                         ?>
                       </td>
                       <td><?php echo $prod->id; ?></td>
                       <td><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
                       <td>$ <?php echo $prod->price; ?></td>
-                      <td>$ <?php echo $prod->status; ?></td>
                       <td>
-                        <a href="make_oder.php?prod_id=<?php echo $prod->prod_id; ?>&prod_name=<?php echo $prod->name; ?>&prod_price=<?php echo $prod->prod_price; ?>">
-                          <button class="btn btn-sm btn-warning">
-                            <i class="fas fa-cart-plus"></i>
-                            Place Order
+                        <label>Customer Name</label>
+                        <select name="prod_name" id="prod_name">
+                          <?php
+                          $ret = "SELECT name FROM products";
+                          $stmt = $mysqli->prepare($ret);
+                          $stmt->execute();
+                          $res = $stmt->get_result();
+                          while ($pro = $res->fetch_object()) {
+                          ?>
+                            <option><?php echo $pro->name; ?></option>
+                          <?php } ?>
+                        </select>
+                      </td>
+                      <td>
+                        <input id="status">
+                      </td>
+                      <td>
+                        <?php if ($status == 'Available') { ?>
+                          <a href="make_oder.php?prod_id=<?php echo $prod->id; ?>&prod_name=<?php echo $prod->name; ?>&prod_price=<?php echo $prod->price; ?>">
+                            <button class="btn btn-sm btn-success">
+                              <i class="fas fa-cart-plus"></i>
+                              Place Order
+                            </button>
+                          </a>
+                        <?php } else { ?>
+                          <button class="btn btn-sm btn-danger">
+                            <i class=""></i>
+                            Not Available
                           </button>
-                        </a>
+                        <?php } ?>
                       </td>
                     </tr>
                   <?php } ?>
@@ -98,6 +127,10 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
+  <script>
+
+  </script>
+
 </body>
 <!-- For more projects: Visit codeastro.com  -->
 
