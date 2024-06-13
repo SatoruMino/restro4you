@@ -68,5 +68,20 @@
             });
 
         }
+
+        function getProduct(id, val) {
+            console.log(id);
+            $.ajax({
+                type: "POST",
+                url: "product_ajax.php",
+                data: {
+                    'prod_name': id,
+                    'prod_qty': val,
+                },
+                success: function(data) {
+                    $('#status').val(data);
+                }
+            });
+        }
     </script>
 </head>

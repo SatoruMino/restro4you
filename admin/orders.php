@@ -73,26 +73,17 @@ require_once('partials/_head.php');
                         }
                         ?>
                       </td>
-                      <td><?php echo $prod->id; ?></td>
+                      <td><span id="prod_id"><?php echo $prod->id; ?></span></td>
                       <td><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
                       <td>$ <?php echo $prod->price; ?></td>
                       <td>
                         <label>Customer Name</label>
-                        <select name="prod_name" id="prod_name">
-                          <?php
-                          $ret = "SELECT name FROM products";
-                          $stmt = $mysqli->prepare($ret);
-                          $stmt->execute();
-                          $res = $stmt->get_result();
-                          while ($pro = $res->fetch_object()) {
-                          ?>
-                            <option><?php echo $pro->name; ?></option>
-                          <?php } ?>
-                        </select>
+                        <input type="text" id="prod_name" name="prod_name" class="text">
                       </td>
                       <td>
                         <input id="status">
+                        <input id="prod_qty" type="number" name="prod_qty">
                       </td>
                       <td>
                         <?php if ($status == 'Available') { ?>
@@ -128,7 +119,20 @@ require_once('partials/_head.php');
   require_once('partials/_scripts.php');
   ?>
   <script>
+    $(document).ready(function() {
+      $('#prod_qty').on("input", function() {
+        // Get the value from #prod_id using .text() for text content
+        var id = $('#prod_id').text();
 
+        // Get the value from this (the input element) using .val() for input value
+        var qty = $(this).val();
+
+        console.log(id);
+        console.log(qty);
+
+        getProduct(id, qty);
+      });
+    });
   </script>
 
 </body>
