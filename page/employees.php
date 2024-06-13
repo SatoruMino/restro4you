@@ -63,7 +63,9 @@ require_once('partials/_head.php');
                 </thead>
                 <tbody>
                   <?php
-                  $ret = "SELECT e.*, p.name AS position FROM employees e INNER JOIN positions p ON e.pos_id = p.id";
+                  $ret = "SELECT e.*, p.name AS position, u.email AS email FROM employees e 
+                  INNER JOIN positions p ON e.pos_id = p.id 
+                  INNER JOIN users u ON e.u_id = u.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
@@ -75,7 +77,7 @@ require_once('partials/_head.php');
                       <td><?php echo $emp->gender; ?></td>
                       <td><?php echo $emp->position; ?></td>
                       <td><?php echo $emp->phone; ?></td>
-                      <td><?php echo $emp->emp_email; ?></td>
+                      <td><?php echo $emp->email; ?></td>
                       <td>
                         <a href="employees.php?delete=<?php echo $emp->id; ?>">
                           <button class="btn btn-sm btn-danger">

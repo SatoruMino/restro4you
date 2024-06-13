@@ -1,19 +1,22 @@
 <?php
 $userId = $_SESSION['userId'];
 $role = $_SESSION['role'];
-$sql = "";
-if ($role = 'admin') {
-  $sql = "SELECT * FROM admins WHERE u_id = '$userId'";
-} else if ($role == 'cashier' || $role == 'stocker') {
-  $sql = "SELECT * FROM employees WHERE u_id = '$userId'";
-} else {
-  $sql = "SELECT * FROM customers WHERE u_id = '$userId'";
+$sql = '';
+switch ($role) {
+  case "admin":
+    $sql = "SELECT * FROM admins WHERE u_id = '$userId'";
+    break;
+  case "customer":
+    $sql = "SELECT * FROM customers WHERE u_id = '$userId'";
+    break;
+  default:
+    $sql = "SELECT * FROM employees WHERE u_id = '$userId'";
+    break;
 }
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($user = $res->fetch_object()) {
-
 ?>
   <nav class="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white" id="sidenav-main">
     <div class="container-fluid">
@@ -94,21 +97,23 @@ while ($user = $res->fetch_object()) {
               <i class="bx bxs-dashboard text-primary"></i> DASHBOARD
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="positions.php">
-              <i class="bx bxs-user-badge text-primary"></i> POSITION
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="category.php">
-              <i class="bx bx-category text-primary"></i> CATEGORY
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="employees.php">
-              <i class="bx bxs-group text-primary"></i> EMPLOYEE
-            </a>
-          </li>
+          <?php if ($role == 'admin') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="positions.php">
+                <i class="bx bxs-user-badge text-primary"></i> POSITION
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="category.php">
+                <i class="bx bx-category text-primary"></i> CATEGORY
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="employees.php">
+                <i class="bx bxs-group text-primary"></i> EMPLOYEE
+              </a>
+            </li>
+          <?php } ?>
           <li class="nav-item">
             <a class="nav-link" href="customers.php">
               <i class="bx bx-user text-primary"></i> CUSTOMER
