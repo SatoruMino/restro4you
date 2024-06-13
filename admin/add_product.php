@@ -22,7 +22,7 @@ if (isset($_POST['addProduct'])) {
     $qty = $_POST['qty'];
     $recipe = array();
     for ($i = 0; $i < count($ingredients); $i++) {
-      $recipe = array(
+      $recipe[] = array(
         'id' => $ingredients[$i],
         'qty' => $qty[$i],
       );
