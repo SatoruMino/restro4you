@@ -56,6 +56,15 @@
 
     <?php } ?>
     <script>
+        function showSnackBar(id, message) {
+            var snackbar = id;
+            snackbar.text(message);
+            snackbar.addClass("show");
+            setTimeout(function() {
+                snackbar.removeClass("show");
+            }, 3000);
+        }
+
         function getCustomer(val) {
             $.ajax({
                 type: "POST",
@@ -69,13 +78,12 @@
 
         }
 
-        function getProduct(id, val) {
-            console.log(id);
+        function getProductStatus(id, val) {
             $.ajax({
                 type: "POST",
                 url: "product_ajax.php",
                 data: {
-                    'prod_name': id,
+                    'prod_id': id,
                     'prod_qty': val,
                 },
                 success: function(data) {

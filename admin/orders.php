@@ -10,6 +10,77 @@ require_once('partials/_head.php');
     border: none !important;
     box-shadow: none !important;
   }
+
+  /* -- Snack bar-- */
+  #snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+  }
+
+  #snackbar.show {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+
+  @-webkit-keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadein {
+    from {
+      bottom: 0;
+      opacity: 0;
+    }
+
+    to {
+      bottom: 30px;
+      opacity: 1;
+    }
+  }
+
+  @-webkit-keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeout {
+    from {
+      bottom: 30px;
+      opacity: 1;
+    }
+
+    to {
+      bottom: 0;
+      opacity: 0;
+    }
+  }
 </style>
 
 <body>
@@ -56,7 +127,6 @@ require_once('partials/_head.php');
                 </thead><!-- For more projects: Visit codeastro.com  -->
                 <tbody>
                   <?php
-                  $status = "Available";
                   $ret = "SELECT p.*, c.name as cate_name FROM products p INNER JOIN category c ON p.cate_id = c.id";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
@@ -73,37 +143,25 @@ require_once('partials/_head.php');
                         }
                         ?>
                       </td>
-                      <td><span id="prod_id"><?php echo $prod->id; ?></span></td>
-                      <td><?php echo $prod->name; ?></td>
+                      <td id="prod_id"><?php echo $prod->id; ?></td>
+                      <td id="prod_name"><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
-                      <td>$ <?php echo $prod->price; ?></td>
+                      <td>$ <span id="prod_price"><?php echo $prod->price; ?></span></td>
                       <td>
-                        <label>Customer Name</label>
-                        <input type="text" id="prod_name" name="prod_name" class="text">
+                        <input type="number" id="prod_qty" name="prod_qty" class="form-control input-no-border" min="1" placeholder="Specify qty!">
                       </td>
+                      <td><input type="text" id="status" name="status" class="form-control input-no-border" value="Unknown!"></td>
                       <td>
-                        <input id="status">
-                        <input id="prod_qty" type="number" name="prod_qty">
-                      </td>
-                      <td>
-                        <?php if ($status == 'Available') { ?>
-                          <a href="make_oder.php?prod_id=<?php echo $prod->id; ?>&prod_name=<?php echo $prod->name; ?>&prod_price=<?php echo $prod->price; ?>">
-                            <button class="btn btn-sm btn-success">
-                              <i class="fas fa-cart-plus"></i>
-                              Place Order
-                            </button>
-                          </a>
-                        <?php } else { ?>
-                          <button class="btn btn-sm btn-danger">
-                            <i class=""></i>
-                            Not Available
-                          </button>
-                        <?php } ?>
+                        <button class="btn btn-sm btn-success" id="makeOrderButton">
+                          <i class="fas fa-cart-plus"></i>
+                          Place Order
+                        </button>
                       </td>
                     </tr>
                   <?php } ?>
                 </tbody>
               </table>
+              <div id="snackbar" name="snackbar"></div>
             </div>
           </div>
         </div>
@@ -119,18 +177,33 @@ require_once('partials/_head.php');
   require_once('partials/_scripts.php');
   ?>
   <script>
+    var snackbar = $('#snackbar');
     $(document).ready(function() {
+      function validateOrder() {
+        var status = $('#status').val();
+        console.log(status);
+        if (status != 'Available') {
+          showSnackBar(snackbar, 'Product is not available to order!');
+          return false;
+        }
+        return true;
+      }
+      //Fetch Product Qty To Find Ingredient Needed
       $('#prod_qty').on("input", function() {
-        // Get the value from #prod_id using .text() for text content
         var id = $('#prod_id').text();
-
-        // Get the value from this (the input element) using .val() for input value
         var qty = $(this).val();
-
-        console.log(id);
-        console.log(qty);
-
-        getProduct(id, qty);
+        //Fetch Product Status
+        getProductStatus(id, qty);
+      });
+      //Placer Order
+      $('#makeOrderButton').click(function() {
+        if (validateOrder()) {
+          var id = $('#prod_id').text();
+          var name = $('#prod_name').text();
+          var price = $('#prod_price').text();
+          var qty = $('#prod_qty').val();
+          window.location.href = "make_order.php?prod_id=" + id + "&prod_name=" + name + "&prod_price=" + price + "&prod_qty=" + qty;
+        }
       });
     });
   </script>

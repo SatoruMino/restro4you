@@ -1,5 +1,5 @@
 <?php
-$userId = $_SESSION['adminId'];
+$userId = $_SESSION['admin_id'];
 //$login_id = $_SESSION['login_id'];
 $sql = "SELECT * FROM  admins  WHERE u_id = '$userId'";
 $stmt = $mysqli->prepare($sql);

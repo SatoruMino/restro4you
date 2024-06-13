@@ -6,7 +6,7 @@ check_login();
 //Cancel Order
 if (isset($_GET['cancel'])) {
     $id = $_GET['cancel'];
-    $adn = "DELETE FROM  rpos_orders  WHERE  order_id = ?";
+    $adn = "DELETE FROM  orders  WHERE  id = ?";
     $stmt = $mysqli->prepare($adn);
     $stmt->bind_param('s', $id);
     $stmt->execute();
@@ -33,7 +33,7 @@ require_once('partials/_head.php');
         ?>
         <!-- Header -->
         <div style="background-image: url(assets/img/theme/restro00.jpg); background-size: cover;" class="header  pb-8 pt-5 pt-md-8">
-        <span class="mask bg-gradient-dark opacity-8"></span>
+            <span class="mask bg-gradient-dark opacity-8"></span>
             <div class="container-fluid">
                 <div class="header-body">
                 </div>
@@ -65,29 +65,27 @@ require_once('partials/_head.php');
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $ret = "SELECT * FROM  rpos_orders WHERE order_status =''  ORDER BY `rpos_orders`.`created_at` DESC  ";
+                                    $ret = "SELECT * FROM orders ORDER BY `orders`.`order_date` DESC  ";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
                                     while ($order = $res->fetch_object()) {
-                                        $total = ($order->prod_price * $order->prod_qty);
-
                                     ?>
                                         <tr>
-                                            <th class="text-success" scope="row"><?php echo $order->order_code; ?></th>
-                                            <td><?php echo $order->customer_name; ?></td>
-                                            <td><?php echo $order->prod_name; ?></td>
-                                            <td>$ <?php echo $total; ?></td>
-                                            <td><?php echo date('d/M/Y g:i', strtotime($order->created_at)); ?></td>
+                                            <th class="text-success" scope="row"><?php echo $order->id; ?></th>
+                                            <td><?php echo $order->cust_id; ?></td>
+                                            <td><?php echo $order->p_id; ?></td>
+                                            <td>$ <?php echo $order->total; ?></td>
+                                            <td><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
                                             <td>
-                                                <a href="pay_order.php?order_code=<?php echo $order->order_code;?>&customer_id=<?php echo $order->customer_id;?>&order_status=Paid">
+                                                <a href="pay_order.php?order_code=<?php echo $order->id; ?>&customer_id=<?php echo $order->customer_id; ?>&order_status=Paid">
                                                     <button class="btn btn-sm btn-success">
                                                         <i class="fas fa-handshake"></i>
                                                         Pay Order
                                                     </button>
                                                 </a>
 
-                                                <a href="payments.php?cancel=<?php echo $order->order_id; ?>">
+                                                <a href="payments.php?cancel=<?php echo $order->id; ?>">
                                                     <button class="btn btn-sm btn-danger">
                                                         <i class="fas fa-window-close"></i>
                                                         Cancel Order
@@ -114,4 +112,5 @@ require_once('partials/_head.php');
     ?>
 </body>
 <!-- For more projects: Visit codeastro.com  -->
+
 </html>
