@@ -8,17 +8,16 @@ check_login();
 //Add Staff
 if (isset($_POST['addIngredient'])) {
     //Prevent Posting Blank Values
-    if (empty($_POST["name"]) || empty($_POST["qty"]) || empty($_POST['unit'])) {
+    if (empty($_POST["name"]) || empty($_POST['unit'])) {
         $err = "Black value can't be accepted!";
     } else {
         $name = $_POST['name'];
         $unit = $_POST['unit'];
-        $qty = $_POST['qty'];
         //Insert Captured information to a database table
-        $postQuery = "INSERT INTO ingredients (name, unit, qty) VALUES(?,?,?)";
+        $postQuery = "INSERT INTO ingredients (name, unit) VALUES(?,?)";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('sss', $name, $unit, $qty);
+        $rc = $postStmt->bind_param('ss', $name, $unit);
         $postStmt->execute();
         //declare a varible which will be passed to alert function
         if ($postStmt) {
@@ -70,14 +69,6 @@ require_once('partials/_head.php');
                                         <label>Ingredient Unit</label>
                                         <input type="unit" name="unit" class="form-control" value="">
                                     </div>
-                                </div>
-                                <hr>
-                                <div class="form-row">
-                                    <div class="col-md-6">
-                                        <label>Ingredient Qty</label>
-                                        <input type="number" name="qty" class="form-control" value="">
-                                    </div>
-                                    <hr>
                                 </div>
                                 <br>
                                 <div class="form-row">

@@ -32,48 +32,48 @@ require_once('partials/_head.php');
                 <div class="col">
                     <div class="card shadow">
                         <div class="card-header border-0">
-                            Payment Reports
-                        </div>
+                            Import Records
+                        </div><!-- For more projects: Visit codeastro.com  -->
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush">
                                 <thead class="thead-light">
                                     <tr>
-                                        <th class="text-success" scope="col">Payment Code</th>
-                                        <th scope="col">Payment Method</th>
-                                        <th scope="col">Amount Paid</th>
-                                        <th class="text-success" scope="col">Date Paid</th>
+                                        <th class="text-success" scope="col">Code</th>
+                                        <th scope="col">Supplier</th>
+                                        <th class="text-success" scope="col">Ingredient</th>
+                                        <th scope="col">Unit Price</th>
+                                        <th class="text-success" scope="col">Quantity</th>
+                                        <th scope="col">Total Price</th>
+                                        <th scope="col">Import Date</th>
                                     </tr>
-                                </thead><!-- For more projects: Visit codeastro.com  -->
+                                </thead>
                                 <tbody>
                                     <?php
-                                    $ret = "SELECT * FROM  payments ORDER BY `paid_date` DESC ";
+                                    $ret = "SELECT imp.*, s.name AS sup_name, i.name AS ingred_name FROM
+                                            imports imp INNER JOIN suppliers s ON imp.sup_id = s.id INNER JOIN
+                                            ingredients i ON imp.int_id = i.id
+                                    ";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
-                                    while ($payment = $res->fetch_object()) {
+                                    while ($import = $res->fetch_object()) {
                                     ?>
                                         <tr>
-                                            <th class="text-success" scope="row">
-                                                <?php echo $payment->id; ?>
-                                            </th>
-                                            <th scope="row">
-                                                <?php echo $payment->method; ?>
-                                            </th>
-
-                                            <td>
-                                                $ <?php echo $payment->amount; ?>
-                                            </td>
-                                            <td class="text-success">
-                                                <?php echo date('d/M/Y g:i', strtotime($payment->paid_date)) ?>
-                                            </td>
+                                            <th class="text-success" scope="row"><?php echo $import->id; ?></th>
+                                            <td><?php echo $import->sup_name; ?></td>
+                                            <td class="text-success"><?php echo $import->ingred_name; ?></td>
+                                            <td>$ <?php echo $import->price; ?></td>
+                                            <td class="text-success"><?php echo $import->qty; ?></td>
+                                            <td>$ <?php echo $import->total; ?></td>
+                                            <td><?php echo date('d/M/Y g:i', strtotime($import->import_date)); ?></td>
                                         </tr>
                                     <?php } ?>
-                                </tbody><!-- For more projects: Visit codeastro.com  -->
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div><!-- For more projects: Visit codeastro.com  -->
             <!-- Footer -->
             <?php
             require_once('partials/_footer.php');

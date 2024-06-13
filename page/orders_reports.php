@@ -19,7 +19,7 @@ require_once('partials/_head.php');
         ?>
         <!-- Header -->
         <div style="background-image: url(assets/img/theme/restro00.jpg); background-size: cover;" class="header  pb-8 pt-5 pt-md-8">
-        <span class="mask bg-gradient-dark opacity-8"></span>
+            <span class="mask bg-gradient-dark opacity-8"></span>
             <div class="container-fluid">
                 <div class="header-body">
                 </div>
@@ -50,27 +50,27 @@ require_once('partials/_head.php');
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $ret = "SELECT * FROM  rpos_orders ORDER BY `created_at` DESC  ";
+                                    $ret = "SELECT o.*, c.name AS cust_name, p.name AS prod_name FROM orders o INNER JOIN
+                                    customers c ON o.cust_id = c.id INNER JOIN 
+                                    products p ON o.p_id = p.id ORDER BY `order_date` DESC  ";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
                                     while ($order = $res->fetch_object()) {
-                                        $total = ($order->prod_price * $order->prod_qty);
-
                                     ?>
                                         <tr>
-                                            <th class="text-success" scope="row"><?php echo $order->order_code; ?></th>
-                                            <td><?php echo $order->customer_name; ?></td>
+                                            <th class="text-success" scope="row"><?php echo $order->id; ?></th>
+                                            <td><?php echo $order->cust_name; ?></td>
                                             <td class="text-success"><?php echo $order->prod_name; ?></td>
-                                            <td>$ <?php echo $order->prod_price; ?></td>
-                                            <td class="text-success"><?php echo $order->prod_qty; ?></td>
-                                            <td>$ <?php echo $total; ?></td>
-                                            <td><?php if ($order->order_status == '') {
+                                            <td>$ <?php echo $order->price; ?></td>
+                                            <td class="text-success"><?php echo $order->qty; ?></td>
+                                            <td>$ <?php echo $order->total; ?></td>
+                                            <td><?php if ($order->status == '') {
                                                     echo "<span class='badge badge-danger'>Not Paid</span>";
                                                 } else {
-                                                    echo "<span class='badge badge-success'>$order->order_status</span>";
+                                                    echo "<span class='badge badge-success'>$order->status</span>";
                                                 } ?></td>
-                                            <td><?php echo date('d/M/Y g:i', strtotime($order->created_at)); ?></td>
+                                            <td><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
                                         </tr>
                                     <?php } ?>
                                 </tbody>
@@ -91,4 +91,5 @@ require_once('partials/_head.php');
     ?>
 </body>
 <!-- For more projects: Visit codeastro.com  -->
+
 </html>

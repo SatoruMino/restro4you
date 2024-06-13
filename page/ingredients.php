@@ -46,7 +46,8 @@ require_once('partials/_head.php');
                 <div class="col">
                     <div class="card shadow">
                         <div class="card-header border-0">
-                            <a href="add_ingredient.php" class="btn btn-outline-success"><i class='bx bx-plus'></i> Add Ingredients</a>
+                            <a href="add_ingredient.php" class="btn btn-outline-success"><i class='bx bx-import'></i> Add Ingredients</a>
+                            <a href="import_ingredient.php" class="btn btn-outline-success"><i class='bx bx-import'></i> Import Ingredients</a>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-items-center table-flush">

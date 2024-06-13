@@ -162,6 +162,11 @@ while ($user = $res->fetch_object()) {
             </a>
           </li>
           <li class="nav-item">
+            <a class="nav-link" href="import_report.php">
+              <i class="bx bx-import"></i> IMPORT
+            </a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="payments_reports.php">
               <i class="bx bx-credit-card-alt"></i> PAYMENTS
             </a>

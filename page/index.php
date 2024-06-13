@@ -131,27 +131,28 @@ require_once('partials/_analytics.php');
                 </thead>
                 <tbody>
                   <?php
-                  $ret = "SELECT * FROM orders ORDER BY `orders`.`order_date` DESC LIMIT 7 ";
+                  $ret = "SELECT o.*, p.name AS prod_name, c.name AS cust_name FROM orders o INNER JOIN 
+                  products p ON o.p_id = p.id INNER JOIN
+                  customers c ON o.cust_id = c.id
+                  ORDER BY `o`.`order_date` DESC LIMIT 7 ";
                   $stmt = $mysqli->prepare($ret);
                   $stmt->execute();
                   $res = $stmt->get_result();
                   while ($order = $res->fetch_object()) {
-                    $total = ($order->prod_price * $order->prod_qty);
-
                   ?>
                     <tr>
-                      <th class="text-success" scope="row"><?php echo $order->order_code; ?></th>
-                      <td><?php echo $order->customer_name; ?></td>
+                      <th class="text-success" scope="row"><?php echo $order->id; ?></th>
+                      <td><?php echo $order->cust_name; ?></td>
                       <td class="text-success"><?php echo $order->prod_name; ?></td>
-                      <td>$<?php echo $order->prod_price; ?></td>
-                      <td class="text-success"><?php echo $order->prod_qty; ?></td>
-                      <td>$<?php echo $total; ?></td>
-                      <td><?php if ($order->order_status == '') {
+                      <td>$<?php echo $order->price; ?></td>
+                      <td class="text-success"><?php echo $order->qty; ?></td>
+                      <td>$<?php echo $order->total; ?></td>
+                      <td><?php if ($order->status == '') {
                             echo "<span class='badge badge-danger'>Not Paid</span>";
                           } else {
-                            echo "<span class='badge badge-success'>$order->order_status</span>";
+                            echo "<span class='badge badge-success'>$order->status</span>";
                           } ?></td>
-                      <td class="text-success"><?php echo date('d/M/Y g:i', strtotime($order->created_at)); ?></td>
+                      <td class="text-success"><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
                     </tr>
                   <?php } ?>
                 </tbody>

@@ -8,18 +8,17 @@ check_login();
 //Add Staff
 if (isset($_POST['updateIngredient'])) {
     //Prevent Posting Blank Values
-    if (empty($_POST["name"]) || empty($_POST["qty"]) || empty($_POST['unit'])) {
+    if (empty($_POST["name"]) ||  empty($_POST['unit'])) {
         $err = "Black value can't be accepted!";
     } else {
         $name = $_POST['name'];
         $unit = $_POST['unit'];
-        $qty = $_POST['qty'];
         $update = $_GET['update'];
         //Insert Captured information to a database table
-        $postQuery = "UPDATE ingredients SET name =?, unit =?, qty =? WHERE id =?";
+        $postQuery = "UPDATE ingredients SET name =?, unit =? WHERE id =?";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('ssss', $name, $unit, $qty, $update);
+        $rc = $postStmt->bind_param('sss', $name, $unit, $update);
         $postStmt->execute();
         //declare a varible which will be passed to alert function
         if ($postStmt) {
@@ -81,14 +80,6 @@ require_once('partials/_head.php');
                                             <label>Ingredient Unit</label>
                                             <input type="unit" name="unit" class="form-control" value="<?php echo $ingred->unit; ?>">
                                         </div>
-                                    </div>
-                                    <hr>
-                                    <div class="form-row">
-                                        <div class="col-md-6">
-                                            <label>Ingredient Qty</label>
-                                            <input type="number" name="qty" class="form-control" value="<?php echo $ingred->qty; ?>">
-                                        </div>
-                                        <hr>
                                     </div>
                                     <br>
                                     <div class="form-row">
