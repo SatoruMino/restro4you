@@ -65,7 +65,7 @@ require_once('partials/_head.php');
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $ret = "SELECT * FROM orders ORDER BY `orders`.`order_date` DESC  ";
+                                    $ret = "SELECT * FROM orders WHERE status != 'Paid' ORDER BY `orders`.`order_date` DESC  ";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
@@ -78,7 +78,7 @@ require_once('partials/_head.php');
                                             <td>$ <?php echo $order->total; ?></td>
                                             <td><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
                                             <td>
-                                                <a href="pay_order.php?order_code=<?php echo $order->id; ?>&customer_id=<?php echo $order->customer_id; ?>&order_status=Paid">
+                                                <a href="pay_order.php?order_code=<?php echo $order->id; ?>&cust_id=<?php echo $order->cust_id; ?>&order_status=Paid">
                                                     <button class="btn btn-sm btn-success">
                                                         <i class="fas fa-handshake"></i>
                                                         Pay Order

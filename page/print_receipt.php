@@ -33,13 +33,11 @@ check_login();
 </style>
 <?php
 $order_code = $_GET['order_code'];
-$ret = "SELECT * FROM  rpos_orders WHERE order_code = '$order_code'";
+$ret = "SELECT o.*, p.name AS prod_name FROM orders o INNER JOIN products p ON o.p_id = p.id WHERE o.id = '$order_code'";
 $stmt = $mysqli->prepare($ret);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($order = $res->fetch_object()) {
-    $total = ($order->prod_price * $order->prod_qty);
-
 ?>
 
     <body>
@@ -60,10 +58,10 @@ while ($order = $res->fetch_object()) {
                         </div>
                         <div class="col-xs-6 col-sm-6 col-md-6 text-right">
                             <p>
-                                <em>Date: <?php echo date('d/M/Y g:i', strtotime($order->created_at)); ?></em>
+                                <em>Date: <?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></em>
                             </p>
                             <p>
-                                <em class="text-success">Receipt #: <?php echo $order->order_code; ?></em>
+                                <em class="text-success">Receipt #: <?php echo $order->id; ?></em>
                             </p>
                         </div>
                     </div>
@@ -85,9 +83,9 @@ while ($order = $res->fetch_object()) {
                                 <tr>
                                     <td class="col-md-9"><em> <?php echo $order->prod_name; ?> </em></h4>
                                     </td>
-                                    <td class="col-md-1" style="text-align: center"> <?php echo $order->prod_qty; ?></td>
-                                    <td class="col-md-1 text-center">$<?php echo $order->prod_price; ?></td>
-                                    <td class="col-md-1 text-center">$<?php echo $total; ?></td>
+                                    <td class="col-md-1" style="text-align: center"> <?php echo $order->qty; ?></td>
+                                    <td class="col-md-1 text-center">$<?php echo $order->price; ?></td>
+                                    <td class="col-md-1 text-center">$<?php echo $order->total; ?></td>
                                 </tr>
                                 <tr>
                                     <td>   </td>
@@ -102,7 +100,7 @@ while ($order = $res->fetch_object()) {
                                     </td>
                                     <td class="text-center">
                                         <p>
-                                            <strong>$<?php echo $total; ?></strong>
+                                            <strong>$<?php echo $order->total; ?></strong>
                                         </p>
                                         <p>
                                             <strong>14%</strong>
@@ -116,7 +114,7 @@ while ($order = $res->fetch_object()) {
                                         <h4><strong>Total: </strong></h4>
                                     </td>
                                     <td class="text-center text-danger">
-                                        <h4><strong>$<?php echo $total; ?></strong></h4>
+                                        <h4><strong>$<?php echo $order->total; ?></strong></h4>
                                     </td>
                                 </tr>
                             </tbody>

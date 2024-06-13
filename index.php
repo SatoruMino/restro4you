@@ -12,11 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user) {
         if (password_verify($password, $user['password'])) {
             $role = $user['role'];
-            if ($role == 'admin') {
-                $_SESSION['admin_id'] = $user['id'];
-                header('Location: admin/');
-                exit();
-            }
+            $_SESSION['userId'] = $user['id'];
+            $_SESSION['role'] = $role;
+            header('Location: page/');
+            exit();
         } else {
             $error = 'User entered the incorrect password';
         }

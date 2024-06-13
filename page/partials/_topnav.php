@@ -1,7 +1,15 @@
 <?php
-$userId = $_SESSION['admin_id'];
+$userId = $_SESSION['userId'];
+$role = $_SESSION['role'];
+if ($role == 'admin') {
+    $ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
+} else if ($role == 'cashier' || $role == 'stocker') {
+    $ret = "SELECT * FROM  employees  WHERE u_id = '$userId'";
+} else {
+    $ret = "SELECT * FROM  customers  WHERE u_id = '$userId'";
+}
 //$login_id = $_SESSION['login_id'];
-$ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
+
 $stmt = $mysqli->prepare($ret);
 $stmt->execute();
 $res = $stmt->get_result();
@@ -11,7 +19,7 @@ while ($user = $res->fetch_object()) {
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
         <div class="container-fluid">
             <!-- Brand -->
-            <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="dashboard.php"><?php echo $user->name; ?> Dashboard</a>
+            <a class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block" href="index.php"><?php echo $user->name; ?> Dashboard</a>
             <!-- Form -->
 
             <!-- User -->

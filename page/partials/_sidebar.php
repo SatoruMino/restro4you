@@ -1,7 +1,14 @@
 <?php
-$userId = $_SESSION['admin_id'];
-//$login_id = $_SESSION['login_id'];
-$sql = "SELECT * FROM  admins  WHERE u_id = '$userId'";
+$userId = $_SESSION['userId'];
+$role = $_SESSION['role'];
+$sql = "";
+if ($role = 'admin') {
+  $sql = "SELECT * FROM admins WHERE u_id = '$userId'";
+} else if ($role == 'cashier' || $role == 'stocker') {
+  $sql = "SELECT * FROM employees WHERE u_id = '$userId'";
+} else {
+  $sql = "SELECT * FROM customers WHERE u_id = '$userId'";
+}
 $stmt = $mysqli->prepare($sql);
 $stmt->execute();
 $res = $stmt->get_result();
