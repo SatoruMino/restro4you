@@ -180,7 +180,7 @@ require_once('partials/_head.php');
     var snackbar = $('#snackbar');
     $(document).ready(function() {
       function validateOrder() {
-        var status = $('#status').val();
+        var status = $('#status').text();
         console.log(status);
         if (status != 'Available') {
           showSnackBar(snackbar, 'Product is not available to order!');

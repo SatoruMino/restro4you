@@ -410,12 +410,73 @@ require_once('partials/_analytics.php');
                         <td>$<?php echo $order->price; ?></td>
                         <td class="text-success"><?php echo $order->qty; ?></td>
                         <td>$<?php echo $order->total; ?></td>
-                        <td><?php if ($order->status == '') {
+                        <td><?php if ($order->order_status == '') {
                               echo "<span class='badge badge-danger'>Not Paid</span>";
                             } else {
-                              echo "<span class='badge badge-success'>$order->status</span>";
+                              echo "<span class='badge badge-success'>$order->order_status</span>";
                             } ?></td>
                         <td class="text-success"><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
+                      </tr>
+                    <?php } ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- For more projects: Visit codeastro.com  -->
+        <div class="row mt-5">
+          <div class="col-xl-12">
+            <div class="card shadow">
+              <div class="card-header border-0">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h3 class="mb-0">Recent Import</h3>
+                  </div>
+                  <div class="col text-right">
+                    <a href="import_report.php" class="btn btn-sm btn-primary">See all</a>
+                  </div>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <!-- Projects table -->
+                <table class="table align-items-center table-flush">
+                  <thead class="thead-light">
+                    <tr>
+                      <th class="text-success" scope="col"><b>Import Code</b></th>
+                      <th scope="col"><b>Import Date</b></th>
+                      <th class='text-success' scope="col"><b>Supplier Name</b></th>
+                      <th class='text-success' scope="col"><b>Ingredient Name</b></th>
+                      <th class='text-success' scope="col"><b>Total</b></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php
+                    $ret = "SELECT imp.*, s.name AS sup_name, i.name AS ingred_name FROM imports imp INNER JOIN 
+                            suppliers s ON imp.sup_id = s.id INNER JOIN 
+                            ingredients i ON imp.int_id = i.id ORDER BY `imp`.`import_date` DESC LIMIT 7 ";
+                    $stmt = $mysqli->prepare($ret);
+                    $stmt->execute();
+                    $res = $stmt->get_result();
+                    while ($import = $res->fetch_object()) {
+                    ?>
+                      <tr>
+                        <th class="text-success" scope="row">
+                          <?php echo $import->id; ?>
+                        </th>
+                        <td>
+                          $<?php echo $import->import_date; ?>
+                        </td>
+                        <td class='text-success'>
+                          <?php echo $import->sup_name; ?>
+                        </td>
+                        <td class='text-success'>
+                          <?php echo $import->ingred_name; ?>
+                        </td>
+                        <td class='text-success'>
+                          $<?php echo $import->total; ?>
+                        </td>
                       </tr>
                     <?php } ?>
                   </tbody>
@@ -475,55 +536,125 @@ require_once('partials/_analytics.php');
           </div>
         </div>
       <?php } ?>
-      <div class="row mt-5">
-        <div class="col-xl-12">
-          <div class="card shadow">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">Recent Import</h3>
+      <?php if ($role == 'customer') {
+        $ret = "SELECT id FROM customers WHERE u_id = '$userId'";
+        $getmt = $mysqli->prepare("$ret");
+        $getmt->execute();
+        $res = $getmt->get_result();
+        if ($result = $res->fetch_assoc()) {
+          $cust_id = $result['id'];
+      ?>
+          <div class="row mt-5">
+            <div class="col-xl-12">
+              <div class="card shadow">
+                <div class="card-header border-0">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <h3 class="mb-0">Recent Payment</h3>
+                    </div>
+                    <div class="col text-right">
+                      <a href="import_report.php" class="btn btn-sm btn-primary">See all</a>
+                    </div>
+                  </div>
                 </div>
-                <div class="col text-right">
-                  <a href="import_report.php" class="btn btn-sm btn-primary">See all</a>
+                <div class="table-responsive">
+                  <!-- Projects table -->
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr>
+                        <th class="text-success" scope="col"><b>Code</b></th>
+                        <th scope="col"><b>Amount</b></th>
+                        <th class='text-success' scope="col"><b>Order Code</b></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $ret = "SELECT * FROM payments WHERE cust_id ='$cust_id'   ORDER BY `payments`.`paid_date` DESC LIMIT 10 ";
+                      $stmt = $mysqli->prepare($ret);
+                      $stmt->execute();
+                      $res = $stmt->get_result();
+                      while ($payment = $res->fetch_object()) {
+                      ?>
+                        <tr>
+                          <th class="text-success" scope="row">
+                            <?php echo $payment->id; ?>
+                          </th>
+                          <td>
+                            $<?php echo $payment->amount; ?>
+                          </td>
+                          <td class='text-success'>
+                            <?php echo $payment->o_id; ?>
+                          </td>
+                        </tr>
+                      <?php } ?>
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
-            <div class="table-responsive">
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th class="text-success" scope="col"><b>Code</b></th>
-                    <th scope="col"><b>Amount</b></th>
-                    <th class='text-success' scope="col"><b>Order Code</b></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php
-                  $ret = "SELECT * FROM payments ORDER BY `payments`.`paid_date` DESC LIMIT 7 ";
-                  $stmt = $mysqli->prepare($ret);
-                  $stmt->execute();
-                  $res = $stmt->get_result();
-                  while ($payment = $res->fetch_object()) {
-                  ?>
-                    <tr>
-                      <th class="text-success" scope="row">
-                        <?php echo $payment->id; ?>
-                      </th>
-                      <td>
-                        $<?php echo $payment->amount; ?>
-                      </td>
-                      <td class='text-success'>
-                        <?php echo $payment->o_id; ?>
-                      </td>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
+          </div>
+          <div class="row mt-5">
+            <div class="col-xl-12 mb-5 mb-xl-0">
+              <div class="card shadow">
+                <div class="card-header border-0">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <h3 class="mb-0">Recent Orders</h3>
+                    </div>
+                    <div class="col text-right">
+                      <a href="orders_reports.php" class="btn btn-sm btn-primary">See all</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="table-responsive">
+                  <!-- Projects table -->
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr><!-- For more projects: Visit codeastro.com  -->
+                        <th class="text-success" scope="col">Code</th>
+                        <th scope="col">Customer</th>
+                        <th class="text-success" scope="col">Product</th>
+                        <th scope="col">Unit Price</th>
+                        <th class="text-success" scope="col">#</th>
+                        <th scope="col">Total Price</th>
+                        <th scop="col">Status</th>
+                        <th class="text-success" scope="col">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php
+                      $ret = "SELECT o.*, p.name AS prod_name, c.name AS cust_name FROM orders o INNER JOIN
+                              products p ON o.p_id = p.id INNER JOIN
+                              customers c ON o.cust_id = c.id  WHERE o.cust_id = '$cust_id' ORDER BY `o`.`order_date` DESC LIMIT 10 ";
+                      $stmt = $mysqli->prepare($ret);
+                      $stmt->execute();
+                      $res = $stmt->get_result();
+                      while ($order = $res->fetch_object()) {
+                      ?>
+                        <tr>
+                          <th class="text-success" scope="row"><?php echo $order->id; ?></th>
+                          <td><?php echo $order->cust_name; ?></td>
+                          <td class="text-success"><?php echo $order->prod_name; ?></td>
+                          <td>$<?php echo $order->price; ?></td>
+                          <td class="text-success"><?php echo $order->qty; ?></td>
+                          <td>$<?php echo $order->total; ?></td>
+                          <td><?php if ($order->order_status == '') {
+                                echo "<span class='badge badge-danger'>Not Paid</span>";
+                              } else {
+                                echo "<span class='badge badge-success'>$order->order_status</span>";
+                              } ?></td>
+                          <td class="text-success"><?php echo date('d/M/Y g:i', strtotime($order->order_date)); ?></td>
+                        </tr>
+                      <?php } ?>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+
+      <?php }
+      } ?>
       <!-- Footer -->
       <?php require_once('partials/_footer.php'); ?>
     </div>

@@ -19,7 +19,7 @@ if (isset($_POST['updateCustomer'])) {
     $photo = $_FILES['photo']['name'];
     $old_photo = $_POST['old_photo'];
     if ($photo) {
-      move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/customers/" . $_FILES["photo"]["name"]);
+      move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/users/" . $_FILES["photo"]["name"]);
     } else {
       $photo = $old_photo;
     }

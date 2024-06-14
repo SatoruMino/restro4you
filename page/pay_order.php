@@ -22,7 +22,7 @@ if (isset($_POST['pay'])) {
 
     //Insert Captured information to a database table
     $postQuery = "INSERT INTO payments (id, o_id, cust_id, amount, method) VALUES(?,?,?,?,?)";
-    $upQry = "UPDATE orders SET status =? WHERE id =?";
+    $upQry = "UPDATE orders SET order_status =? WHERE id =?";
 
     $postStmt = $mysqli->prepare($postQuery);
     $upStmt = $mysqli->prepare($upQry);

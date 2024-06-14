@@ -13,7 +13,13 @@ if (isset($_POST['changeProfile'])) {
   $phone = $_POST['phone'];
   $address = $_POST['address'];
   $photo = $_FILES['photo']['name'];
-  move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/users/" . $_FILES["photo"]["name"]);
+  if ($photo) {
+    move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/users/" . $_FILES["photo"]["name"]);
+  } else {
+    $photo = $_POST['old_photo'];
+  }
+
+
   // Prepare the SQL query based on the user's role
   $Qry = '';
   switch ($role) {
@@ -98,6 +104,7 @@ require_once('partials/_head.php');
                     <div class="card-profile-image">
                       <a href="index.php">
                         <img style="height: 175px; width: 175px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : 'assets/img/users/' . $user->photo; ?>" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
+                        <input type="hidden" name="old_photo" value="<?php echo $user->photo; ?>">
                       </a>
                     </div>
                   </div>

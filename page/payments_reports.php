@@ -35,41 +35,89 @@ require_once('partials/_head.php');
                             Payment Reports
                         </div>
                         <div class="table-responsive">
-                            <table class="table align-items-center table-flush">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th class="text-success" scope="col">Payment Code</th>
-                                        <th scope="col">Payment Method</th>
-                                        <th scope="col">Amount Paid</th>
-                                        <th class="text-success" scope="col">Date Paid</th>
-                                    </tr>
-                                </thead><!-- For more projects: Visit codeastro.com  -->
-                                <tbody>
-                                    <?php
-                                    $ret = "SELECT * FROM  payments ORDER BY `paid_date` DESC ";
-                                    $stmt = $mysqli->prepare($ret);
-                                    $stmt->execute();
-                                    $res = $stmt->get_result();
-                                    while ($payment = $res->fetch_object()) {
-                                    ?>
+                            <?php if ($role == 'admin' || $role == 'cashier') { ?>
+                                <table class="table align-items-center table-flush">
+                                    <thead class="thead-light">
                                         <tr>
-                                            <th class="text-success" scope="row">
-                                                <?php echo $payment->id; ?>
-                                            </th>
-                                            <th scope="row">
-                                                <?php echo $payment->method; ?>
-                                            </th>
-
-                                            <td>
-                                                $ <?php echo $payment->amount; ?>
-                                            </td>
-                                            <td class="text-success">
-                                                <?php echo date('d/M/Y g:i', strtotime($payment->paid_date)) ?>
-                                            </td>
+                                            <th class="text-success" scope="col">Payment Code</th>
+                                            <th scope="col">Payment Method</th>
+                                            <th scope="col">Amount Paid</th>
+                                            <th class="text-success" scope="col">Date Paid</th>
                                         </tr>
-                                    <?php } ?>
-                                </tbody><!-- For more projects: Visit codeastro.com  -->
-                            </table>
+                                    </thead><!-- For more projects: Visit codeastro.com  -->
+                                    <tbody>
+                                        <?php
+                                        $ret = "SELECT * FROM  payments ORDER BY `paid_date` DESC ";
+                                        $stmt = $mysqli->prepare($ret);
+                                        $stmt->execute();
+                                        $res = $stmt->get_result();
+                                        while ($payment = $res->fetch_object()) {
+                                        ?>
+                                            <tr>
+                                                <th class="text-success" scope="row">
+                                                    <?php echo $payment->id; ?>
+                                                </th>
+                                                <th scope="row">
+                                                    <?php echo $payment->method; ?>
+                                                </th>
+
+                                                <td>
+                                                    $ <?php echo $payment->amount; ?>
+                                                </td>
+                                                <td class="text-success">
+                                                    <?php echo date('d/M/Y g:i', strtotime($payment->paid_date)) ?>
+                                                </td>
+                                            </tr>
+                                        <?php } ?>
+                                    </tbody><!-- For more projects: Visit codeastro.com  -->
+                                </table>
+                                <?php } else if ($role == 'customer') {
+                                $ret = "SELECT id FROM customers WHERE u_id = '$userId'";
+                                $getmt = $mysqli->prepare("$ret");
+                                $getmt->execute();
+                                $res = $getmt->get_result();
+                                if ($result = $res->fetch_assoc()) {
+                                    $cust_id = $result['id'];  ?>
+                                    <table class="table align-items-center table-flush">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="text-success" scope="col">Payment Code</th>
+                                                <th scope="col">Payment Method</th>
+                                                <th class="text-success" scope="col">Order Code</th>
+                                                <th scope="col">Amount Paid</th>
+                                                <th class="text-success" scope="col">Date Paid</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php
+                                            $ret = "SELECT * FROM  payments WHERE cust_id ='$cust_id' ORDER BY `paid_date` DESC ";
+                                            $stmt = $mysqli->prepare($ret);
+                                            $stmt->execute();
+                                            $res = $stmt->get_result();
+                                            while ($payment = $res->fetch_object()) {
+                                            ?>
+                                                <tr>
+                                                    <th class="text-success" scope="row">
+                                                        <?php echo $payment->id; ?>
+                                                    </th>
+                                                    <th scope="row">
+                                                        <?php echo $payment->method; ?>
+                                                    </th>
+                                                    <td class="text-success">
+                                                        <?php echo $payment->o_id; ?>
+                                                    </td>
+                                                    <td>
+                                                        $ <?php echo $payment->amount; ?>
+                                                    </td>
+                                                    <td class="text-success">
+                                                        <?php echo date('d/M/Y g:i', strtotime($payment->paid_date)) ?>
+                                                    </td>
+                                                </tr>
+                                            <?php } ?>
+                                        </tbody>
+                                    </table>
+                                <?php } ?>
+                            <?php } ?>
                         </div>
                     </div>
                 </div>

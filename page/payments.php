@@ -65,7 +65,7 @@ require_once('partials/_head.php');
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $ret = "SELECT * FROM orders WHERE status != 'Paid' ORDER BY `orders`.`order_date` DESC  ";
+                                    $ret = "SELECT * FROM  orders WHERE order_status =''  ORDER BY `orders`.`order_date` DESC  ";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
