@@ -150,7 +150,7 @@ require_once('partials/_head.php');
                       <td>
                         <input type="number" id="prod_qty" name="prod_qty" class="form-control input-no-border" min="1" placeholder="Specify qty!">
                       </td>
-                      <td><input type="text" id="status" name="status" class="form-control input-no-border" value="Unknown!"></td>
+                      <td><span id="status" name="status" class="form-control input-no-border">Unknown!</span></td>
                       <td>
                         <button class="btn btn-sm btn-success" id="makeOrderButton">
                           <i class="fas fa-cart-plus"></i>

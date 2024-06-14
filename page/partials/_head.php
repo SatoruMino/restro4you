@@ -23,6 +23,7 @@
     <!-- Argon CSS -->
     <link type="text/css" href="assets/css/argon.css?v=1.0.0" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/542ceb73fc.js" crossorigin="anonymous"></script>
     <script src="assets/js/swal.js"></script>
     <!--Load Swal-->
     <?php if (isset($success)) { ?>
@@ -87,7 +88,7 @@
                     'prod_qty': val,
                 },
                 success: function(data) {
-                    $('#status').val(data);
+                    $('#status').text(data);
                 }
             });
         }

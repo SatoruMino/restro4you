@@ -79,17 +79,6 @@ while ($user = $res->fetch_object()) {
             </div>
           </div>
         </div>
-        <!-- Form -->
-        <form class="mt-4 mb-3 d-md-none">
-          <div class="input-group input-group-rounded input-group-merge">
-            <input type="search" class="form-control form-control-rounded form-control-prepended" placeholder="Search" aria-label="Search">
-            <div class="input-group-prepend">
-              <div class="input-group-text">
-                <span class="fa fa-search"></span>
-              </div>
-            </div>
-          </div>
-        </form>
         <!-- Navigation -->
         <ul class="navbar-nav">
           <li class="nav-item">
@@ -114,46 +103,56 @@ while ($user = $res->fetch_object()) {
               </a>
             </li>
           <?php } ?>
-          <li class="nav-item">
-            <a class="nav-link" href="customers.php">
-              <i class="bx bx-user text-primary"></i> CUSTOMER
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="suppliers.php">
-              <i class="bx bx-user-plus text-primary"></i> SUPPLIER
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="products.php">
-              <i class="bx bx-food-menu text-primary"></i>FOOD
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="orders.php">
-              <i class="bx bx-cart text-primary"></i> ORDERS
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="ingredients.php">
-              <i class="bx bx-list-ul text-primary"></i> INGREDIENT
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="imports.php">
-              <i class="bx bx-import text-primary"></i> IMPORT
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="payments.php">
-              <i class="bx bxs-credit-card text-primary"></i> PAYMENT
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="receipts.php">
-              <i class="bx bx-receipt text-primary"></i> RECEIPT
-            </a>
-          </li>
+          <?php if ($role == 'admin' || $role == 'cashier') {
+          ?>
+            <li class="nav-item">
+              <a class="nav-link" href="customers.php">
+                <i class="bx bx-user text-primary"></i> CUSTOMER
+              </a>
+            </li>
+          <?php } ?>
+          <?php if ($role == 'stocker' || $role == 'admin') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="suppliers.php">
+                <i class="bx bx-user-plus text-primary"></i> SUPPLIER
+              </a>
+            </li>
+          <?php } ?>
+          <?php if ($role == 'admin' || $role == 'cashier') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="products.php">
+                <i class="bx bx-food-menu text-primary"></i>FOOD
+              </a>
+            </li>
+          <?php } ?>
+          <?php if ($role == 'admin' || $role == 'cashier' || $role == 'customer') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="orders.php">
+                <i class="bx bx-cart text-primary"></i> <?php echo ($role == 'customer') ? 'MAKE ORDERS' : 'ORDERS' ?>
+              </a>
+            </li>
+          <?php } ?>
+          <?php if ($role == 'admin' || $role == 'stocker') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="ingredients.php">
+                <i class="bx bx-list-ul text-primary"></i> INGREDIENT
+              </a>
+            </li>
+          <?php  } ?>
+          <?php if ($role == 'admin' || $role == 'cashier' || $role == 'customer') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="payments.php">
+                <i class="bx bxs-credit-card text-primary"></i> PAYMENT
+              </a>
+            </li>
+          <?php  } ?>
+          <?php if ($role == 'admin' || $role == 'cashier') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="receipts.php">
+                <i class="bx bx-receipt text-primary"></i> RECEIPT
+              </a>
+            </li>
+          <?php } ?>
         </ul>
         <!-- Divider -->
         <hr class="my-3">
@@ -161,19 +160,34 @@ while ($user = $res->fetch_object()) {
         <h6 class="navbar-heading text-muted">REPORTING</h6>
         <!-- Navigation -->
         <ul class="navbar-nav mb-md-3">
+          <?php if ($role == 'admin' || $role == 'cashier' || $role == 'customer') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="orders_reports.php">
+                <i class="bx bx-basket"></i> <?php echo ($role == 'customer') ? 'MY ORDERS' : 'ORDERS'; ?>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="payments_reports.php">
+                <i class="bx bx-credit-card-alt"></i> <?php echo ($role == 'customer') ? 'MY PAYMENTS' : 'PAYMENTS'; ?>
+              </a>
+            </li>
+          <?php } ?>
+          <?php if ($role == 'admin' || $role == 'stocker') { ?>
+            <li class="nav-item">
+              <a class="nav-link" href="import_report.php">
+                <i class="bx bx-import"></i> IMPORT
+              </a>
+            </li>
+          <?php } ?>
+        </ul>
+        <!-- Divider -->
+        <hr class="my-3">
+        <!-- Heading -->
+        <h6 class="navbar-heading text-muted">SETTINGS</h6>
+        <ul class="navbar-nav mb-md-3">
           <li class="nav-item">
-            <a class="nav-link" href="orders_reports.php">
-              <i class="bx bx-basket"></i> ORDERS
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="import_report.php">
-              <i class="bx bx-import"></i> IMPORT
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="payments_reports.php">
-              <i class="bx bx-credit-card-alt"></i> PAYMENTS
+            <a class="nav-link" href="change_profile.php">
+              <i class='bx bx-user-circle text-primary'></i> PROFILE
             </a>
           </li>
         </ul>

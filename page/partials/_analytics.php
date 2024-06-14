@@ -30,3 +30,35 @@ $stmt->execute();
 $stmt->bind_result($sales);
 $stmt->fetch();
 $stmt->close();
+
+//5.Import Expense
+$query = "SELECT SUM(total) FROM `imports`";
+$stmt = $mysqli->prepare($query);
+$stmt->execute();
+$stmt->bind_result($importExpense);
+$stmt->fetch();
+$stmt->close();
+
+//6.Ingrdients
+$query = "SELECT COUNT(*) FROM `ingredients`";
+$stmt = $mysqli->prepare($query);
+$stmt->execute();
+$stmt->bind_result($ingredients);
+$stmt->fetch();
+$stmt->close();
+
+//6.Imports
+$query = "SELECT COUNT(*) FROM `imports`";
+$stmt = $mysqli->prepare($query);
+$stmt->execute();
+$stmt->bind_result($imports);
+$stmt->fetch();
+$stmt->close();
+
+//7.Supplier
+$query = "SELECT COUNT(*) FROM `suppliers`";
+$stmt = $mysqli->prepare($query);
+$stmt->execute();
+$stmt->bind_result($suppliers);
+$stmt->fetch();
+$stmt->close();

@@ -1,31 +1,45 @@
 <?php
 session_start();
-include("config/pdoconfig.php");
+include("config/config.php");
+
 $error = '';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_REQUEST['name'];
     $email = $_REQUEST['email'];
     $password = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
-    $stmt->bindParam(':email', $email);
+    // Prepared statement to check if email exists
+    $stmt = $mysqli->prepare('SELECT * FROM users WHERE email = ?');
+    $stmt->bind_param('s', $email);
     $stmt->execute();
-    $result = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($result) {
-        $error = 'User has already been existed!';
+    $stmt->store_result();
+    // Check the number of rows returned
+    if ($stmt->num_rows > 0) {
+        $error =  "User is already existed!";
     } else {
-        $stmt = $pdo->prepare('INSERT INTO users(name, email, password) VALUE(:name, :email, :password)');
-        $stmt->bindParam(':name', $name);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $password);
-        if ($stmt->execute()) {
-            $_SESSION['userId'] = $pdo->lastInsertId();
-            header('Location: customer/index.php');
-        } else {
-            $error = 'Failed to register!';
+        $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'customer')";
+        $postStmt = $mysqli->prepare($postQuery);
+        //bind paramaters
+        $rc = $postStmt->bind_param('ss', $email, $password);
+        if ($postStmt->execute()) {
+            $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
+            if ($result) {
+                $row = $result->fetch_assoc();
+                $u_id = $row['id'];
+                $custmt = $mysqli->prepare('INSERT INTO customers(name, u_id) VALUE (?,?)');
+                $custmt->bind_param('ss', $name, $u_id);
+                if ($custmt->execute()) {
+                    $_SESSION['userId'] = $u_id;
+                    $_SESSION['role'] = 'customer';
+                    header('Location: page/');
+                    exit();
+                } else {
+                    $err = "Please Try Again Or Try Later";
+                }
+            }
         }
     }
 }
-
 ?>
 <!DOCTYPE html>
 <!-- Coding By CodingNepal - codingnepalweb.com -->

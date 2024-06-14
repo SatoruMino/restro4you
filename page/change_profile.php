@@ -5,9 +5,9 @@ include('config/checklogin.php');
 check_login();
 //Update Profile
 if (isset($_POST['ChangeProfile'])) {
-  $admin_id = $_SESSION['admin_id'];
-  $admin_name = $_POST['admin_name'];
-  $admin_email = $_POST['admin_email'];
+  $admin_id = $_SESSION['id'];
+  $admin_name = $_POST['name'];
+  $admin_email = $_POST['email'];
   $Qry = "UPDATE rpos_admin SET admin_name =?, admin_email =? WHERE admin_id =?";
   $postStmt = $mysqli->prepare($Qry);
   //bind paramaters
@@ -86,13 +86,23 @@ require_once('partials/_head.php');
     <!-- Top navbar -->
     <?php
     require_once('partials/_topnav.php');
-    $admin_id = $_SESSION['admin_id'];
+    $userId = $_SESSION['userId'];
+    $role = $_SESSION['role'];
+    switch ($role) {
+      case 'admin':
+        $ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
+        break;
+      case 'customer':
+        $ret = "SELECT * FROM  customers  WHERE u_id = '$userId'";
+      default:
+        $ret = "SELECT * FROM  employees  WHERE u_id = '$userId'";
+        break;
+    }
     //$login_id = $_SESSION['login_id'];
-    $ret = "SELECT * FROM  rpos_admin  WHERE admin_id = '$admin_id'";
     $stmt = $mysqli->prepare($ret);
     $stmt->execute();
     $res = $stmt->get_result();
-    while ($admin = $res->fetch_object()) {
+    while ($user = $res->fetch_object()) {
     ?>
       <!-- Header -->
       <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" style="min-height: 600px; background-image: url(assets/img/theme/restro00.jpg); background-size: cover; background-position: center top;">
@@ -102,7 +112,7 @@ require_once('partials/_head.php');
         <div class="container-fluid d-flex align-items-center">
           <div class="row">
             <div class="col-lg-7 col-md-10">
-              <h1 class="display-2 text-white">Hello <?php echo $admin->admin_name; ?></h1>
+              <h1 class="display-2 text-white">Hello <?php echo $user->name; ?></h1>
               <p class="text-white mt-0 mb-5">This is your profile page. You can customize your profile as you want And also change password too</p>
             </div>
           </div>
@@ -141,10 +151,10 @@ require_once('partials/_head.php');
                 </div>
                 <div class="text-center">
                   <h3>
-                    <?php echo $admin->admin_name; ?></span>
+                    <?php echo $user->name; ?></span>
                   </h3>
                   <div class="h5 font-weight-300">
-                    <i class="ni location_pin mr-2"></i><?php echo $admin->admin_email; ?>
+                    <i class="ni location_pin mr-2"></i><?php echo $user->name; ?>
                   </div>
                 </div>
               </div>
@@ -169,13 +179,13 @@ require_once('partials/_head.php');
                       <div class="col-lg-6">
                         <div class="form-group">
                           <label class="form-control-label" for="input-username">User Name</label>
-                          <input type="text" name="admin_name" value="<?php echo $admin->admin_name; ?>" id="input-username" class="form-control form-control-alternative" ">
+                          <input type="text" name="admin_name" value="<?php echo $user->name; ?>" id="input-username" class="form-control form-control-alternative" ">
                       </div>
                     </div>
                     <div class=" col-lg-6">
                           <div class="form-group">
                             <label class="form-control-label" for="input-email">Email address</label>
-                            <input type="email" id="input-email" value="<?php echo $admin->admin_email; ?>" name="admin_email" class="form-control form-control-alternative">
+                            <input type="email" id="input-email" value="<?php echo $user->name; ?>" name="admin_email" class="form-control form-control-alternative">
                           </div>
                         </div>
 

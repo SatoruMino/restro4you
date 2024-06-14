@@ -87,26 +87,7 @@ while ($order = $res->fetch_object()) {
                                     <td class="col-md-1 text-center">$<?php echo $order->price; ?></td>
                                     <td class="col-md-1 text-center">$<?php echo $order->total; ?></td>
                                 </tr>
-                                <tr>
-                                    <td>   </td>
-                                    <td>   </td>
-                                    <td class="text-right">
-                                        <p>
-                                            <strong>Subtotal: </strong>
-                                        </p>
-                                        <p>
-                                            <strong>Tax: </strong>
-                                        </p>
-                                    </td>
-                                    <td class="text-center">
-                                        <p>
-                                            <strong>$<?php echo $order->total; ?></strong>
-                                        </p>
-                                        <p>
-                                            <strong>14%</strong>
-                                        </p>
-                                    </td>
-                                </tr>
+
                                 <tr>
                                     <td>   </td>
                                     <td>   </td>

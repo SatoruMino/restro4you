@@ -15,28 +15,35 @@ if (isset($_POST['addEmployee'])) {
     $name = $_POST['name'];
     $gender = $_POST['gender'];
     $dob = $_POST['dob'];
-    $position = $_POST['position'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     //Insert Captured information to a database table
-    $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'employee')";
-    $postStmt = $mysqli->prepare($postQuery);
-    //bind paramaters
-    $rc = $postStmt->bind_param('ss', $email, $password);
-    $postStmt->execute();
-    //declare a varible which will be passed to alert function
-    if ($postStmt) {
-      $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
-      if ($result) {
-        $row = $result->fetch_assoc();
-        $u_id = $row['id'];
-        $empStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, pos_id, dob, phone, u_id) VALUE (?,?,?,?,?,?,?)');
-        $empStmt->bind_param('sssssss', $code, $name, $gender, $position, $dob, $phone, $u_id);
-        if ($empStmt->execute()) {
-          $success = "Customer Has Been Added" && header("refresh:1; url=employees.php");
-        } else {
-          $err = "Please Try Again Or Try Later";
+    $pos_id = $_POST['pos_id'];
+    $stmt = $mysqli->prepare("SELECT name FROM positions WHERE id = ?");
+    $stmt->bind_param("i", $pos_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+      $role = $row["name"];
+      $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,?)";
+      $postStmt = $mysqli->prepare($postQuery);
+      //bind paramaters
+      $rc = $postStmt->bind_param('sss', $email, $password, $role);
+      $postStmt->execute();
+      //declare a varible which will be passed to alert function
+      if ($postStmt) {
+        $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
+        if ($result) {
+          $row = $result->fetch_assoc();
+          $u_id = $row['id'];
+          $empStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, pos_id, dob, phone, u_id) VALUE (?,?,?,?,?,?,?)');
+          $empStmt->bind_param('sssssss', $code, $name, $gender, $pos_id, $dob, $phone, $u_id);
+          if ($empStmt->execute()) {
+            $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
+          } else {
+            $err = "Please Try Again Or Try Later";
+          }
         }
       }
     }
@@ -96,7 +103,7 @@ require_once('partials/_head.php');
                   </div>
                   <div class="col-md-6">
                     <label>Position</label>
-                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="position" id="position">
+                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="pos_id" id="pos_id">
                       <?php
                       $stmt = $mysqli->prepare('SELECT * FROM positions');
                       $stmt->execute();
@@ -149,6 +156,11 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
+  <script>
+    $(document).ready(function() {
+
+    });
+  </script>
 </body>
 
 </html>
