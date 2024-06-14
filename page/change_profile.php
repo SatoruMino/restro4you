@@ -4,7 +4,6 @@ include('config/config.php');
 include('config/checklogin.php');
 check_login();
 //Update Profile
-// Update Profile
 if (isset($_POST['changeProfile'])) {
   $role = $_SESSION['role'];
   $id = $_SESSION['userId'];
@@ -14,50 +13,33 @@ if (isset($_POST['changeProfile'])) {
   $phone = $_POST['phone'];
   $address = $_POST['address'];
   $photo = $_FILES['photo']['name'];
-
-  // Validate and move the uploaded file
-  if ($photo && move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/users/" . $photo)) {
-    $photo_path = "assets/img/users/" . $photo;
-  } else {
-    $photo_path = null; // Handle the case where no photo is uploaded
-  }
-
+  move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/users/" . $_FILES["photo"]["name"]);
   // Prepare the SQL query based on the user's role
   $Qry = '';
   switch ($role) {
     case "admin":
-      $Qry = "UPDATE admins SET name = ?, gender = ?, phone = ?, address = ?, photo = ? WHERE u_id = ?";
+      $Qry = "UPDATE admins a INNER JOIN users u ON a.u_id = u.id
+      SET a.name =?, a.gender =?, a.phone =?, a.address =?, a.photo =?, u.email =?
+      WHERE a.u_id =?";
       break;
     case "customer":
-      $Qry = "UPDATE customers SET name = ?, gender = ?, phone = ?, address = ?, photo = ? WHERE u_id = ?";
+      $Qry = "UPDATE customers c INNER JOIN users u ON c.u_id = u.id
+      SET c.name =?, c.gender =?, c.phone =?, c.address =?, c.photo =?, u.email =?
+      WHERE c.u_id =?";
       break;
     default:
-      $Qry = "UPDATE employees SET name = ?, gender = ?, phone = ?, address = ?, photo = ? WHERE u_id = ?";
+      $Qry = "UPDATE employees e INNER JOIN users u ON e.u_id = u.id
+      SET e.name =?, e.gender =?, e.phone =?, e.address =?, e.photo =?, u.email =?
+      WHERE e.u_id =?";
       break;
   }
-
   $postStmt = $mysqli->prepare($Qry);
+  $postStmt->bind_param('sssssss', $name, $gender, $phone, $address, $photo, $email, $id);
+  $postStmt->execute();
   if ($postStmt) {
-    $postStmt->bind_param('ssssss', $name, $gender, $phone, $address, $photo_path, $id);
-    if ($postStmt->execute()) {
-      $ret = "UPDATE users SET email = ? WHERE id = ?";
-      $updateStmt = $mysqli->prepare($ret);
-      if ($updateStmt) {
-        $updateStmt->bind_param("ss", $email, $id);
-        if ($updateStmt->execute()) {
-          header("Location: index.php");
-          exit();
-        } else {
-          $err = "Failed to update email. Please try again later.";
-        }
-      } else {
-        $err = "Failed to prepare email update statement.";
-      }
-    } else {
-      $err = "Failed to update profile. Please try again later.";
-    }
+    $success = "Customer Has Been Updated" && header("refresh:1; url=index.php");
   } else {
-    $err = "Failed to prepare profile update statement.";
+    $err = "Failed to update profile. Please try again later.";
   }
 }
 require_once('partials/_head.php');
@@ -73,20 +55,18 @@ require_once('partials/_head.php');
     <!-- Top navbar -->
     <?php
     require_once('partials/_topnav.php');
-    $userId = $_SESSION['userId'];
-    $role = $_SESSION['role'];
-    switch ($role) {
-      case 'admin':
-        $ret = "SELECT user.*, u.email AS email FROM admins user INNER JOIN users u ON user.u_id = u.id";
-        break;
-      case 'customer':
-        $ret = "SELECT user.*, u.email AS email FROM customers user INNER JOIN users u ON user.u_id = u.id";
-      default:
-        $ret = "SELECT user.*, u.email AS email FROM employees user INNER JOIN users u ON user.u_id = u.id";
-        break;
+    $ret = '';
+    if ($role == 'admin') {
+      $ret = "SELECT a.*, u.email AS email FROM admins a INNER JOIN users u ON a.u_id = u.id WHERE u_id =?";
+    } else if ($role == 'customer') {
+      $ret = "SELECT c.*, u.email AS email FROM customers c INNER JOIN users u ON c.u_id = u.id WHERE u_id =?";
+    } else {
+      $ret = "SELECT e.*,u.email AS email FROM employees e INNER JOIN users u ON e.u_id = u.id  WHERE u_id =?";
     }
+
     //$login_id = $_SESSION['login_id'];
     $stmt = $mysqli->prepare($ret);
+    $rc = $stmt->bind_param("s", $userId);
     $stmt->execute();
     $res = $stmt->get_result();
     while ($user = $res->fetch_object()) {
@@ -117,7 +97,7 @@ require_once('partials/_head.php');
                   <div class="col-lg-3 order-lg-2">
                     <div class="card-profile-image">
                       <a href="index.php">
-                        <img style="height: 175px; width: 175px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : $user->photo; ?>" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
+                        <img style="height: 175px; width: 175px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : 'assets/img/users/' . $user->photo; ?>" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
                       </a>
                     </div>
                   </div>
@@ -172,7 +152,8 @@ require_once('partials/_head.php');
                       <div class="col-lg-6">
                         <div class="form-group">
                           <label class="form-control-label" for="input-username">User Name</label>
-                          <input type="text" name="name" value="<?php echo $user->name; ?>" class="form-control form-control-alternative" ">
+                          <input type="hidden" name="id" value="<?php echo $user->id; ?>" class="form-control form-control-alternative" ">
+                          <input type=" text" name="name" value="<?php echo $user->name; ?>" class="form-control form-control-alternative" ">
                         </div>
                       </div>
                       <div class=" col-lg-6">

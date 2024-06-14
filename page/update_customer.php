@@ -18,10 +18,10 @@ if (isset($_POST['updateCustomer'])) {
     $address = $_POST['address'];
     $photo = $_FILES['photo']['name'];
     $old_photo = $_POST['old_photo'];
-    if ($customer_photo) {
+    if ($photo) {
       move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/customers/" . $_FILES["photo"]["name"]);
     } else {
-      $customer_photo = $old_photo;
+      $photo = $old_photo;
     }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); //Hash This 
     $update = $_GET['update'];

@@ -21,11 +21,12 @@ if (isset($_POST['addEmployee'])) {
     //Insert Captured information to a database table
     $pos_id = $_POST['pos_id'];
     $stmt = $mysqli->prepare("SELECT name FROM positions WHERE id = ?");
-    $stmt->bind_param("i", $pos_id);
+    $stmt->bind_param("s", $pos_id);
     $stmt->execute();
     $result = $stmt->get_result();
     if ($row = $result->fetch_assoc()) {
       $role = $row["name"];
+      echo $role;
       $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,?)";
       $postStmt = $mysqli->prepare($postQuery);
       //bind paramaters

@@ -1,12 +1,16 @@
 <?php
 $userId = $_SESSION['userId'];
 $role = $_SESSION['role'];
-if ($role == 'admin') {
-    $ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
-} else if ($role == 'cashier' || $role == 'stocker') {
-    $ret = "SELECT * FROM  employees  WHERE u_id = '$userId'";
-} else {
-    $ret = "SELECT * FROM  customers  WHERE u_id = '$userId'";
+switch ($role) {
+    case 'admin':
+        $ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";
+        break;
+    case 'customer':
+        $ret = "SELECT * FROM  customers  WHERE u_id = '$userId'";
+        break;
+    default:
+        $ret = "SELECT * FROM  employees  WHERE u_id = '$userId'";
+        break;
 }
 //$login_id = $_SESSION['login_id'];
 
@@ -14,7 +18,6 @@ $stmt = $mysqli->prepare($ret);
 $stmt->execute();
 $res = $stmt->get_result();
 while ($user = $res->fetch_object()) {
-
 ?>
     <nav class="navbar navbar-top navbar-expand-md navbar-dark" id="navbar-main">
         <div class="container-fluid">
@@ -26,7 +29,7 @@ while ($user = $res->fetch_object()) {
                     <a class="nav-link pr-0" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <div class="media align-items-center">
                             <span class="avatar rounded-circle">
-                                <img style="width: 50px;height: 50px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : $user->photo;; ?>">
+                                <img style="width: 50px;height: 50px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : 'assets/img/users/' . $user->photo;; ?>">
                             </span>
                             <div class="media-body ml-2 d-none d-lg-block">
                                 <span class="mb-0 text-sm  font-weight-bold"><?php echo $user->name; ?></span>
