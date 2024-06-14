@@ -29,22 +29,18 @@ while ($user = $res->fetch_object()) {
         <img src="assets/img/brand/repos.png" class="navbar-brand-img" alt="...">
       </a>
       <!-- User -->
+
       <ul class="nav align-items-center d-md-none">
-        <li class="nav-item dropdown">
-          <a class="nav-link nav-link-icon" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <i class="ni ni-bell-55"></i>
-          </a>
-          <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right" aria-labelledby="navbar-default_dropdown_1">
-          </div>
-        </li>
         <li class="nav-item dropdown">
           <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="media align-items-center">
-              <span class="avatar avatar-sm rounded-circle">
-                <img alt="Image placeholder" src="assets/img/theme/team-1-800x800.jpg">
+              <span class="avatar rounded-circle">
+                <img style="width: 50px;height: 50px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : $user->photo; ?>">
               </span>
+              <span class="p-2">MinomT</span>
             </div>
           </a>
+
           <div class="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
             <div class=" dropdown-header noti-title">
               <h6 class="text-overflow m-0">Welcome!</h6>
@@ -61,6 +57,7 @@ while ($user = $res->fetch_object()) {
           </div>
         </li>
       </ul>
+
       <!-- Collapse -->
       <div class="collapse navbar-collapse" id="sidenav-collapse-main">
         <!-- Collapse header -->
