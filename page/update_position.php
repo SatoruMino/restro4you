@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role(["customer", "stocker", "chef", "cashier"]);
 //Add Customer
 if (isset($_POST['updatePosition'])) {
     //Prevent Posting Blank Values

@@ -5,7 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
-
+diss_allow_role(["stocker", "chef"]);
 if (isset($_POST['pay'])) {
   //Prevent Posting Blank Values
   //Visit codeastro.com for more projects

@@ -3,6 +3,7 @@ session_start();
 include('config/config.php');
 include('config/checklogin.php');
 check_login();
+diss_allow_role(["stocker", "chef"]);
 //Cancel Order
 if (isset($_GET['cancel'])) {
     $id = $_GET['cancel'];

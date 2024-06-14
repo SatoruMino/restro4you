@@ -2,6 +2,8 @@
 session_start();
 include('config/config.php');
 include('config/checklogin.php');
+check_login();
+diss_allow_role(["customer", "stocker", "chef"]);
 if (isset($_GET['delete'])) {
   $id = $_GET['delete'];
   $adn = "DELETE FROM products WHERE id = ?";

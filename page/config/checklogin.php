@@ -1,11 +1,21 @@
 <?php
+function redirect_to($page)
+{
+	$host = $_SERVER['HTTP_HOST'];
+	$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+	header("Location: http://$host$uri/$page");
+	exit();
+}
 function check_login()
 {
 	if (strlen($_SESSION['userId']) == 0) {
-		$host = $_SERVER['HTTP_HOST'];
-		$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-		$extra = "index.php";
-		$_SESSION["staff_id"] = "";
-		header("Location: http://$host$uri/$extra");
+		redirect_to('../');
+	}
+}
+
+function diss_allow_role($role)
+{
+	if (in_array($_SESSION['role'], $role)) {
+		redirect_to("index.php");
 	}
 }

@@ -3,6 +3,7 @@ session_start();
 include('config/config.php');
 include('config/checklogin.php');
 check_login();
+diss_allow_role(["customer", "cashier", "chef"]);
 require_once('partials/_head.php');
 ?>
 

@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role(["cashier", "customer", "chef"]);
 //Add Staff
 if (isset($_POST['addIngredient'])) {
     //Prevent Posting Blank Values

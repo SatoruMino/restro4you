@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role(["customer", "stocker", "chef", "cashier"]);
 //Add Staff
 if (isset($_POST['addEmployee'])) {
   //Prevent Posting Blank Values
@@ -26,7 +27,6 @@ if (isset($_POST['addEmployee'])) {
     $result = $stmt->get_result();
     if ($row = $result->fetch_assoc()) {
       $role = $row["name"];
-      echo $role;
       $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,?)";
       $postStmt = $mysqli->prepare($postQuery);
       //bind paramaters

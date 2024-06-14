@@ -3,6 +3,7 @@ session_start();
 include('config/config.php');
 include('config/checklogin.php');
 check_login();
+diss_allow_role(["customer", "stocker", "chef", "cashier"]);
 //Delete Staff
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];

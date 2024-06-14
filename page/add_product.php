@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role("customer");
 if (isset($_POST['addProduct'])) {
   //Prevent Posting Blank Values
   if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['cate'])  || empty($_POST['price'])) {

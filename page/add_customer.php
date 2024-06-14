@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 //Visit codeastro.com for more projects
 check_login();
+diss_allow_role(["customer", "stocker", "chef"]);
 //Add Customer
 if (isset($_POST['addCustomer'])) {
   //Prevent Posting Blank Values

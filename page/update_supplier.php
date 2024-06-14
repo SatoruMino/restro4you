@@ -5,6 +5,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role(["customer", "cashier", "chef"]);
 //Udpate Staff
 if (isset($_POST['updateSupplier'])) {
     //Prevent Posting Blank Values

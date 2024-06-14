@@ -6,6 +6,7 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
+diss_allow_role(["stocker", "chef"]);
 if (isset($_POST['make'])) {
   //Prevent Posting Blank Values
   if (empty($_POST["o_code"]) || empty($_POST["cust_id"])  || empty($_GET['prod_price'])) {
