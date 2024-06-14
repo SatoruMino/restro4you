@@ -6,9 +6,9 @@ check_login();
 //Delete Staff
 if (isset($_GET['delete'])) {
   $id = $_GET['delete'];
-  $adn = "DELETE FROM  employees  WHERE  id = ?";
+  $adn = "DELETE FROM employees WHERE id =?";
   $stmt = $mysqli->prepare($adn);
-  $stmt->bind_param('i', $id);
+  $stmt->bind_param('s', $id);
   $stmt->execute();
   $stmt->close();
   if ($stmt) {

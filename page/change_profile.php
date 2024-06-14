@@ -194,22 +194,22 @@ require_once('partials/_head.php');
 
                         <div class="col-lg-12">
                           <div class="form-group">
-                            <input type="submit" id="input-email" name="changeProfile" class="btn btn-success form-control-alternative" value="Submit"">
-                      </div>
-                    </div>
+                            <input type="submit" id="input-email" name="changeProfile" class="btn btn-success form-control-alternative" value="Submit">
                           </div>
                         </div>
-                <hr>
+                      </div>
+                    </div>
+                    <hr>
+                  </div>
+                </div>
               </div>
             </div>
+            <!-- Footer -->
+          <?php
+          require_once('partials/_footer.php');
+        }
+          ?>
           </div>
-        </div>
-        <!-- Footer -->
-      <?php
-      require_once('partials/_footer.php');
-    }
-      ?>
-      </div>
       </form>
   </div>
   <!-- Argon Scripts -->
@@ -217,21 +217,21 @@ require_once('partials/_head.php');
   require_once('partials/_sidebar.php');
   ?>
   <script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('input-photo').addEventListener('change', function(event) {
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('input-photo').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.getElementById('user_photo');
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById('user_photo');
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
         } else {
-            alert('Please select a valid image file.');
+          alert('Please select a valid image file.');
         }
+      });
     });
-});
   </script>
 </body>
 
