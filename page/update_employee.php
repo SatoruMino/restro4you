@@ -24,10 +24,10 @@ if (isset($_POST['updateEmployee'])) {
     $update = $_GET['update'];
 
     //Insert Captured information to a database table
-    $postQuery = "CALL updateEmployeeDetail(?,?,?,?,?,?,?,?,?)";
+    $postQuery = "CALL updateEmployeeDetail(?,?,?,?,?,?,?,?)";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssssss', $uid, $name, $gender, $position, $phone, $dob, $email, $password, $update);
+    $rc = $postStmt->bind_param('ssssssss', $name, $gender, $position, $phone, $dob, $email, $password, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
