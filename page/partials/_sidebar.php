@@ -1,7 +1,7 @@
 <?php
 $userId = $_SESSION['userId'];
 $role = $_SESSION['role'];
-$sql = '';
+$sql = "SELECT * FROM admins WHERE u_id = '$userId'";
 switch ($role) {
   case "admin":
     $sql = "SELECT * FROM admins WHERE u_id = '$userId'";

@@ -9,18 +9,22 @@ diss_allow_role(["customer", "stocker", "chef", "cashier"]);
 //Add Staff
 if (isset($_POST['addEmployee'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['email']) || empty($_POST['dob']) || empty($_POST['phone']) || empty($_POST['password'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['email']) || empty($_POST['dob']) || empty($_POST['phone']) || empty($_POST['password']) || empty($_POST['address'])) {
     $err = "Blank Values Can't Be Accepted";
   } else {
     $code = $_POST['code'];
     $name = $_POST['name'];
     $gender = $_POST['gender'];
+    $pos_id = $_POST['pos_id'];
     $dob = $_POST['dob'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
+    $photo = $_FILES['photo'];
+    if ($photo) {
+      move_uploaded_file($photo["tmp_name"], "assets/img/users/" . $photo["name"]);
+    }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     //Insert Captured information to a database table
-    $pos_id = $_POST['pos_id'];
     $stmt = $mysqli->prepare("SELECT name FROM positions WHERE id = ?");
     $stmt->bind_param("s", $pos_id);
     $stmt->execute();
@@ -29,18 +33,20 @@ if (isset($_POST['addEmployee'])) {
       $role = $row["name"];
       $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,?)";
       $postStmt = $mysqli->prepare($postQuery);
-      //bind paramaters
       $rc = $postStmt->bind_param('sss', $email, $password, $role);
-      $postStmt->execute();
       //declare a varible which will be passed to alert function
-      if ($postStmt) {
-        $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
-        if ($result) {
-          $row = $result->fetch_assoc();
-          $u_id = $row['id'];
-          $empStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, pos_id, dob, phone, u_id) VALUE (?,?,?,?,?,?,?)');
-          $empStmt->bind_param('sssssss', $code, $name, $gender, $pos_id, $dob, $phone, $u_id);
-          if ($empStmt->execute()) {
+      if ($postStmt->execute()) {
+        // Fetch the UUID generated for the inserted record
+        $uuidQuery = "SELECT id FROM users WHERE email = ?";
+        $uuidStmt = $mysqli->prepare($uuidQuery);
+        $uuidStmt->bind_param('s', $email);
+        $uuidStmt->execute();
+        $uuidResult = $uuidStmt->get_result();
+        if ($uuidRow = $uuidResult->fetch_assoc()) {
+          $uid = $uuidRow['id']; // This is the UUID retrieved from the database
+          $addStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, dob, phone, pos_id, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?,?)');
+          $addStmt->bind_param('sssssssss', $code, $name, $gender, $dob, $phone, $pos_id, $address, $photo['name'], $uid);
+          if ($addStmt->execute()) {
             $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
           } else {
             $err = "Please Try Again Or Try Later";
@@ -82,19 +88,19 @@ require_once('partials/_head.php');
               <h3>Please Fill All Fields</h3>
             </div>
             <div class="card-body">
-              <form method="POST">
+              <form method="POST" enctype="multipart/form-data">
+                <div class="col-md-6 px-5">
+                  <img style="height: 175px; width: 175px; object-fit:cover;" src="" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
+                </div>
+                <div class="d-none">
+                  <label>Code</label>
+                  <input type="text" name="code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
+                </div>
                 <div class="form-row">
-                  <div class="col-md-6">
-                    <label>Code</label>
-                    <input type="text" name="code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
-                  </div>
                   <div class="col-md-6">
                     <label>Name</label>
                     <input type="text" name="name" class="form-control" value="">
                   </div>
-                  <hr>
-                </div>
-                <div class="form-row">
                   <div class="col-md-6">
                     <label>Gender</label>
                     <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="gender" id="gender">
@@ -102,6 +108,10 @@ require_once('partials/_head.php');
                       <option value="Female">Female</option>
                     </select>
                   </div>
+
+                  <hr>
+                </div>
+                <div class="form-row">
                   <div class="col-md-6">
                     <label>Position</label>
                     <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="pos_id" id="pos_id">
@@ -115,25 +125,37 @@ require_once('partials/_head.php');
                       <?php } ?>
                     </select>
                   </div>
-                </div>
-                <div class="form-row">
                   <div class="col-md-6">
                     <label>Email</label>
                     <input type="email" name="email" class="form-control" value="">
                   </div>
+
+                </div>
+                <div class="form-row">
                   <div class="col-md-6">
                     <label>Date of Birth</label>
                     <input type="date" name="dob" class="form-control" value="">
                   </div>
-                </div>
-                <div class="form-row">
                   <div class="col-md-6">
                     <label>Phone</label>
                     <input type="phone" name="phone" class="form-control" value="">
                   </div>
+
+                </div>
+                <div class="form-row">
                   <div class="col-md-6">
                     <label>Create Password</label>
-                    <input type="text" name="password" class="form-control" value="">
+                    <input type="password" name="password" class="form-control" value="">
+                  </div>
+                  <div class="col-md-6">
+                    <label>Address</label>
+                    <textarea name="address" class="form-control"></textarea>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col-md-6">
+                    <label>Photo</label>
+                    <input type="file" name="photo" id="input-photo" class="btn btn-outline-success form-control">
                   </div>
                 </div>
                 <br>
@@ -158,8 +180,20 @@ require_once('partials/_head.php');
   require_once('partials/_scripts.php');
   ?>
   <script>
-    $(document).ready(function() {
-
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('input-photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById('user_photo');
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('Please select a valid image file.');
+        }
+      });
     });
   </script>
 </body>

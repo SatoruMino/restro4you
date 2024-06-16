@@ -14,36 +14,36 @@ if (isset($_POST['addCustomer'])) {
   } else {
     $code = $_POST['code'];
     $name = $_POST['name'];
-    $email = $_POST['email'];
+    $gender = $_POST['gender'];
+    $dob = $_POST['dob'];
     $phone = $_POST['phone'];
-    $photo = $_FILES['photo']['name'];
-    move_uploaded_file($_FILES["photo"]["tmp_name"], "assets/img/customers/" . $_FILES["photo"]["name"]);
-    $address = $_POST['address'];
+    $email = $_POST['email'];
+    $photo = $_FILES['photo'];
+    if ($photo) {
+      move_uploaded_file($photo["tmp_name"], "assets/img/users/" . $photo["name"]);
+    }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    //Insert Captured information to a database table
     $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'customer')";
     $postStmt = $mysqli->prepare($postQuery);
-    //bind paramaters
     $rc = $postStmt->bind_param('ss', $email, $password);
+    //declare a varible which will be passed to alert function
     if ($postStmt->execute()) {
-      $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
-      if ($result) {
-        $row = $result->fetch_assoc();
-        $u_id = $row['id'];
-        $custmt = $mysqli->prepare('INSERT INTO customers(id, name, phone, address, photo, u_id) VALUE (?,?,?,?,?,?)');
-        $custmt->bind_param('ssssss', $code, $name, $phone, $address, $photo, $u_id);
-        if ($custmt->execute()) {
+      // Fetch the UUID generated for the inserted record
+      $uuidQuery = "SELECT id FROM users WHERE email = ?";
+      $uuidStmt = $mysqli->prepare($uuidQuery);
+      $uuidStmt->bind_param('s', $email);
+      $uuidStmt->execute();
+      $uuidResult = $uuidStmt->get_result();
+      if ($uuidRow = $uuidResult->fetch_assoc()) {
+        $uid = $uuidRow['id']; // This is the UUID retrieved from the database
+        $addStmt = $mysqli->prepare('INSERT INTO customers(id, name, gender, phone , dob, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?)');
+        $addStmt->bind_param('ssssssss', $code, $name, $gender, $phone, $dob, $address, $photo['name'], $uid);
+        if ($addStmt->execute()) {
           $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
         } else {
           $err = "Please Try Again Or Try Later";
         }
       }
-    }
-    //declare a varible which will be passed to alert function
-    if ($postStmt) {
-      $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
-    } else {
-      $err = "Please Try Again Or Try Later";
     }
   }
 }
@@ -78,42 +78,60 @@ require_once('partials/_head.php');
         <div class="col">
           <div class="card shadow">
             <div class="card-header border-0">
-              <h3>Please Fill All Fields</h3>
+              <h3>Please Fill Customers Fields</h3>
             </div><!-- For more projects: Visit codeastro.com  -->
             <div class="card-body">
               <form method="POST" enctype="multipart/form-data">
+                <div class="col-md-6 px-5">
+                  <img style="height: 175px; width: 175px; object-fit:cover;" src="" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
+                </div>
+                <div class="d-none">
+                  <label>Code</label>
+                  <input type="text" name="code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
+                </div>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Name</label>
-                    <input type="text" name="name" class="form-control">
-                    <input type="hidden" name="code" value="<?php echo $cus_id; ?>" class="form-control">
+                    <input type="text" name="name" class="form-control" value="">
                   </div>
+                  <div class="col-md-6">
+                    <label>Gender</label>
+                    <select class="form-control form-select-lg mb-3" aria-label="Large select example" name="gender" id="gender">
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                    </select>
+                  </div>
+
+                  <hr>
+                </div>
+                <div class="form-row">
                   <div class="col-md-6">
                     <label>Email</label>
                     <input type="email" name="email" class="form-control" value="">
                   </div>
+                  <div class="col-md-6">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" class="form-control" value="">
+                  </div>
                 </div>
-                <hr>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Phone</label>
                     <input type="phone" name="phone" class="form-control" value="">
                   </div>
                   <div class="col-md-6">
-                    <label>Address</label>
-                    <textarea name="address" class="form-control" value=""></textarea>
+                    <label>Create Password</label>
+                    <input type="password" name="password" class="form-control" value="">
                   </div>
-
                 </div>
-                <hr>
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Photo</label>
-                    <input type="file" name="photo" class="btn btn-outline-success form-control" value="">
+                    <input type="file" name="photo" id="input-photo" class="btn btn-outline-success form-control">
                   </div>
                   <div class="col-md-6">
-                    <label>Create Password</label>
-                    <input type="password" name="password" class="form-control" value="">
+                    <label>Address</label>
+                    <textarea name="address" class="form-control"></textarea>
                   </div>
                 </div>
                 <br><!-- For more projects: Visit codeastro.com  -->
@@ -137,6 +155,23 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('input-photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById('user_photo');
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('Please select a valid image file.');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
