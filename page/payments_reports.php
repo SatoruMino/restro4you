@@ -41,6 +41,7 @@ require_once('partials/_head.php');
                                     <thead class="thead-light">
                                         <tr>
                                             <th class="text-success" scope="col">Payment Code</th>
+                                            <th scope="col">Customer Name</th>
                                             <th scope="col">Payment Method</th>
                                             <th scope="col">Amount Paid</th>
                                             <th class="text-success" scope="col">Date Paid</th>
@@ -48,7 +49,7 @@ require_once('partials/_head.php');
                                     </thead><!-- For more projects: Visit codeastro.com  -->
                                     <tbody>
                                         <?php
-                                        $ret = "SELECT * FROM  payments ORDER BY `paid_date` DESC ";
+                                        $ret = "SELECT p.*, c.name AS cust_name FROM  payments p INNER JOIN customers c ON p.cust_id = c.id ORDER BY `paid_date` DESC ";
                                         $stmt = $mysqli->prepare($ret);
                                         $stmt->execute();
                                         $res = $stmt->get_result();

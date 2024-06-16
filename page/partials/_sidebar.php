@@ -35,7 +35,7 @@ while ($user = $res->fetch_object()) {
           <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <div class="media align-items-center">
               <span class="avatar rounded-circle">
-                <img style="width: 50px;height: 50px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : $user->photo; ?>">
+                <img style="width: 50px;height: 50px; object-fit:cover;" src="<?php echo ($user->photo == null) ? 'assets/img/theme/user-a-min.png' : 'assets/img/users/' . $user->photo; ?>">
               </span>
               <span class="p-2">MinomT</span>
             </div>
