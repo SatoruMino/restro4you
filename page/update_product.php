@@ -16,10 +16,15 @@ if (isset($_POST['updateProduct'])) {
     $cate = $_POST['cate'];
     $img = $_FILES['img']['name'];
     $old_img = $_POST['old_img'];
-    if ($img) {
-      move_uploaded_file($_FILES["img"]["tmp_name"], "assets/img/products/" . $_FILES["img"]["name"]);
+    if ($photo) {
+      // Sanitize the filename
+      $photo = basename($_FILES['img']['name']);
+      $target_path = "assets/img/products/" . $photo;
+
+      // Move the uploaded file to the target directory
+      move_uploaded_file($_FILES["img"]["tmp_name"], $target_path);
     } else {
-      $img = $old_img;
+      $photo = $_POST['old_img'];
     }
     $price = $_POST['price'];
     $ingredients = $_POST['ingredients'];

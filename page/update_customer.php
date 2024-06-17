@@ -18,11 +18,16 @@ if (isset($_POST['updateCustomer'])) {
     $dob = $_POST['dob'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
-    $photo = $_FILES['photo'];
+    $photo = $_FILES['photo']['name'];
     if ($photo) {
-      move_uploaded_file($photo["tmp_name"], "assets/img/users/" . $photo["name"]);
+      // Sanitize the filename
+      $photo = basename($_FILES['photo']['name']);
+      $target_path = "assets/img/users/" . $photo;
+
+      // Move the uploaded file to the target directory
+      move_uploaded_file($_FILES["photo"]["tmp_name"], $target_path);
     } else {
-      $photo['name'] = $_POST['old_photo'];
+      $photo = $_POST['old_photo'];
     }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT) ?? $_POST['old_password'];
     $update = $_GET['update'];
@@ -41,7 +46,7 @@ if (isset($_POST['updateCustomer'])) {
                     WHERE c.id = ?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssssss', $name, $gender, $phone, $address, $dob, $photo['name'],  $email, $password, $update);
+    $rc = $postStmt->bind_param('sssssssss', $name, $gender, $phone, $address, $dob, $photo,  $email, $password, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
