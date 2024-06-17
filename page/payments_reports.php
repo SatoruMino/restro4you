@@ -59,6 +59,9 @@ require_once('partials/_head.php');
                                                 <th class="text-success" scope="row">
                                                     <?php echo $payment->id; ?>
                                                 </th>
+                                                <th class="text-success" scope="row">
+                                                    <?php echo $payment->cust_name; ?>
+                                                </th>
                                                 <th scope="row">
                                                     <?php echo $payment->method; ?>
                                                 </th>

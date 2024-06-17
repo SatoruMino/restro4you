@@ -5,10 +5,10 @@ include('config/checklogin.php');
 include('config/code-generator.php');
 
 check_login();
-diss_allow_role("customer");
+diss_allow_role(["customer", "stocker", "chef"]);
 if (isset($_POST['addProduct'])) {
   //Prevent Posting Blank Values
-  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['cate'])  || empty($_POST['price'])) {
+  if (empty($_POST["code"]) || empty($_POST["name"]) || empty($_POST['cate'])  || empty($_POST['price']) || empty($_POST['ingredients']) || empty($_POST['qty'])) {
     $err = "Blank Values Not Accepted";
   } else {
     $code  = $_POST['code'];
@@ -17,10 +17,10 @@ if (isset($_POST['addProduct'])) {
     $img = $_FILES['img']['name'];
     move_uploaded_file($_FILES["img"]["tmp_name"], "assets/img/products/" . $_FILES["img"]["name"]);
     $price = $_POST['price'];
+    $qty = $_POST['qty'];
     // Loop through ingredients and quantities
     // Loop through ingredients and quantities
     $ingredients = $_POST['ingredients'];
-    $qty = $_POST['qty'];
     $recipe = array();
     for ($i = 0; $i < count($ingredients); $i++) {
       $recipe[] = array(
@@ -78,17 +78,11 @@ require_once('partials/_head.php');
             <div class="card-body">
               <form method="POST" enctype="multipart/form-data">
                 <div class="form-row">
-                  <div class="col-md-6">
-                    <label>Code</label>
-                    <input type="text" name="code" value="<?php echo $alpha; ?>-<?php echo $beta; ?>" class="form-control" value="">
-                  </div>
+                  <input type="hidden" name="code" value="<?php echo 'prod_' . $uniqueId; ?>" class="form-control">
                   <div class="col-md-6">
                     <label>Name</label>
                     <input type="text" name="name" class="form-control">
                   </div>
-                </div>
-                <hr><!-- For more projects: Visit codeastro.com  -->
-                <div class="form-row">
                   <div class="col-md-6">
                     <label>Category</label>
                     <select class="form-control" name="cate">
@@ -101,13 +95,13 @@ require_once('partials/_head.php');
                       <?php } ?>
                     </select>
                   </div>
+                </div>
+                <hr><!-- For more projects: Visit codeastro.com  -->
+                <div class="form-row">
                   <div class="col-md-6">
                     <label>Price</label>
                     <input type="number" name="price" class="form-control" step="0.01" value="">
                   </div>
-                </div>
-                <hr>
-                <div class="form-row">
                   <div class="col-md-6">
                     <label>Image</label>
                     <input type="file" name="img" class="btn btn-outline-success form-control" value="">

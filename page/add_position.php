@@ -63,10 +63,7 @@ require_once('partials/_head.php');
                         <div class="card-body">
                             <form method="POST">
                                 <div class="form-row">
-                                    <div class="col-md-6">
-                                        <label>Position Code</label>
-                                        <input type="text" name="position_code" class="form-control" value="<?php echo $alpha . '-' . $beta; ?>">
-                                    </div>
+                                    <input type="hidden" name="position_code" class="form-control" value="<?php echo 'pos_' . $uniqueId; ?>">
                                     <div class="col-md-6">
                                         <label>Position Name</label>
                                         <input type="text" name="position_name" class="form-control" value="">

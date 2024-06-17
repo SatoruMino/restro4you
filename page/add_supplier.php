@@ -67,31 +67,28 @@ require_once('partials/_head.php');
                         <div class="card-body">
                             <form method="POST">
                                 <div class="form-row">
-                                    <div class="col-md-6">
-                                        <label>Code</label>
-                                        <input type="text" name="sup_code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
-                                    </div>
+                                    <input type="hidden" name="sup_code" class="form-control" value="<?php echo 'sup_' . $uniqueId; ?>">
                                     <div class="col-md-6">
                                         <label>Name</label>
                                         <input type="text" name="sup_name" class="form-control" value="">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Email</label>
+                                        <input type="email" name="sup_email" class="form-control" value="">
                                     </div>
                                     <hr>
                                 </div>
                                 <div class="form-row">
                                     <div class="col-md-6">
-                                        <label>Email</label>
-                                        <input type="email" name="sup_email" class="form-control" value="">
-                                    </div>
-                                    <div class="col-md-6">
                                         <label>Phone</label>
                                         <input type="phone" name="sup_phone" class="form-control" value="">
                                     </div>
-                                </div>
-                                <div class="form-row">
                                     <div class="col-md-6">
                                         <label>Company</label>
                                         <input type="text" name="sup_company" class="form-control" value="">
                                     </div>
+                                </div>
+                                <div class="form-row">
                                     <div class="col-md-6">
                                         <label>Address</label>
                                         <textarea name="sup_address" class="form-control"></textarea>

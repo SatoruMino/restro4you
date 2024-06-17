@@ -12,13 +12,14 @@ if (isset($_POST['addIngredient'])) {
     if (empty($_POST["name"]) || empty($_POST['unit'])) {
         $err = "Black value can't be accepted!";
     } else {
+        $code = $_POST['code'];
         $name = $_POST['name'];
         $unit = $_POST['unit'];
         //Insert Captured information to a database table
-        $postQuery = "INSERT INTO ingredients (name, unit) VALUES(?,?)";
+        $postQuery = "INSERT INTO ingredients (id, name, unit) VALUES(?, ?,?)";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('ss', $name, $unit);
+        $rc = $postStmt->bind_param('sss', $code, $name, $unit);
         $postStmt->execute();
         //declare a varible which will be passed to alert function
         if ($postStmt) {
@@ -62,6 +63,7 @@ require_once('partials/_head.php');
                         <div class="card-body">
                             <form method="POST">
                                 <div class="form-row">
+                                    <input type="hidden" name="code" value="<?php echo 'ingred_' . $uniqueId; ?>">
                                     <div class="col-md-6">
                                         <label>Ingredient Name</label>
                                         <input type="text" name="name" class="form-control" value="">

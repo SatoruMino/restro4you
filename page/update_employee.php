@@ -19,11 +19,16 @@ if (isset($_POST['updateEmployee'])) {
     $dob = $_POST['dob'];
     $phone = $_POST['phone'];
     $email = $_POST['email'];
-    $photo = $_FILES['photo'];
+    $photo = $_FILES['photo']['name'];
     if ($photo) {
-      move_uploaded_file($photo["tmp_name"], "assets/img/users/" . $photo["name"]);
+      // Sanitize the filename
+      $photo = basename($_FILES['photo']['name']);
+      $target_path = "assets/img/users/" . $photo;
+
+      // Move the uploaded file to the target directory
+      move_uploaded_file($_FILES["photo"]["tmp_name"], $target_path);
     } else {
-      $photo['name'] = $_POST['old_photo'];
+      $photo = $_POST['old_photo'];
     }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT) ?? $_POST['old_password'];
     $update = $_GET['update'];
@@ -40,7 +45,7 @@ if (isset($_POST['updateEmployee'])) {
                     WHERE e.id = ?";
     $postStmt = $mysqli->prepare($postQuery);
     //bind paramaters
-    $rc = $postStmt->bind_param('sssssssss', $name, $gender, $pos_id, $phone, $dob, $email, $password, $photo['name'], $update);
+    $rc = $postStmt->bind_param('sssssssss', $name, $gender, $pos_id, $phone, $dob, $email, $password, $photo, $update);
     $postStmt->execute();
     //declare a varible which will be passed to alert function
     if ($postStmt) {
@@ -157,7 +162,7 @@ require_once('partials/_head.php');
                     <div class="col-md-6">
                       <label>Photo</label>
                       <input type="file" name="photo" id="input-photo" class="btn btn-outline-success form-control">
-                      <input type="hidden" name="old_photo" vale="<?php echo $emp->photo; ?>">
+                      <input type="hidden" name="old_photo" value="<?php echo $emp->photo; ?>">
                     </div>
                   </div>
                   <br>
@@ -182,6 +187,23 @@ require_once('partials/_head.php');
   <?php
   require_once('partials/_scripts.php');
   ?>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.getElementById('input-photo').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            const img = document.getElementById('user_photo');
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('Please select a valid image file.');
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>

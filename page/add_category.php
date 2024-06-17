@@ -14,7 +14,6 @@ if (isset($_POST['addCategory'])) {
     } else {
         $category_code = $_POST['category_code'];
         $category_name = $_POST['category_name'];
-
         //Insert Captured information to a database table
         $postQuery = "INSERT INTO category (id, name) VALUES(?,?)";
         $postStmt = $mysqli->prepare($postQuery);
@@ -63,10 +62,7 @@ require_once('partials/_head.php');
                         <div class="card-body">
                             <form method="POST">
                                 <div class="form-row">
-                                    <div class="col-md-6">
-                                        <label>Category Code</label>
-                                        <input type="text" name="category_code" class="form-control" value="<?php echo $alpha . '-' . $beta; ?>">
-                                    </div>
+                                    <input type="hidden" name="category_code" class="form-control" value="<?php echo 'cate_' . $uniqueId; ?>">
                                     <div class="col-md-6">
                                         <label>Category Name</label>
                                         <input type="text" name="category_name" class="form-control" value="">

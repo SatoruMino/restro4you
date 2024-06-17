@@ -92,10 +92,7 @@ require_once('partials/_head.php');
                 <div class="col-md-6 px-5">
                   <img style="height: 175px; width: 175px; object-fit:cover;" src="" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
                 </div>
-                <div class="d-none">
-                  <label>Code</label>
-                  <input type="text" name="code" class="form-control" value="<?php echo $alpha; ?>-<?php echo $beta; ?>">
-                </div>
+                <input type="text" name="code" class="form-control" value="<?php echo 'emp_' . $uniqueId; ?>">
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Name</label>
