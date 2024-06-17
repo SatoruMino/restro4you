@@ -1,10 +1,11 @@
 <?php
 session_start();
 include("config/config.php");
-
+include("config/code-generator.php");
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $code = 'user_' . $uniqueId;
     $name = $_REQUEST['name'];
     $email = $_REQUEST['email'];
     $password = password_hash($_REQUEST['password'], PASSWORD_DEFAULT);
@@ -17,25 +18,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->num_rows > 0) {
         $error =  "User is already existed!";
     } else {
-        $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'customer')";
+        $postQuery = "INSERT INTO users (id, email, password, role) VALUES (?,?,?,'customer')";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('ss', $email, $password);
+        $rc = $postStmt->bind_param('sss', $code, $email, $password);
         if ($postStmt->execute()) {
-            $result = $mysqli->query("SELECT id FROM users WHERE email = '$email'");
-            if ($result) {
-                $row = $result->fetch_assoc();
-                $u_id = $row['id'];
-                $custmt = $mysqli->prepare('INSERT INTO customers(name, u_id) VALUE (?,?)');
-                $custmt->bind_param('ss', $name, $u_id);
-                if ($custmt->execute()) {
-                    $_SESSION['userId'] = $u_id;
-                    $_SESSION['role'] = 'customer';
-                    header('Location: page/');
-                    exit();
-                } else {
-                    $err = "Please Try Again Or Try Later";
-                }
+            $cust_code = 'cust_' . $uniqueId;
+            $custmt = $mysqli->prepare('INSERT INTO customers(id, name, u_id) VALUE (?,?,?)');
+            $custmt->bind_param('sss', $cust_code, $name, $code);
+            if ($custmt->execute()) {
+                $_SESSION['userId'] = $code;
+                $_SESSION['role'] = 'customer';
+                header('Location: page/');
+                exit();
+            } else {
+                $err = "Please Try Again Or Try Later";
             }
         }
     }

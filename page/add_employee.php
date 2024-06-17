@@ -13,6 +13,7 @@ if (isset($_POST['addEmployee'])) {
     $err = "Blank Values Can't Be Accepted";
   } else {
     $code = $_POST['code'];
+    $uid = 'user_' . $uniqueId;
     $name = $_POST['name'];
     $gender = $_POST['gender'];
     $pos_id = $_POST['pos_id'];
@@ -31,26 +32,17 @@ if (isset($_POST['addEmployee'])) {
     $result = $stmt->get_result();
     if ($row = $result->fetch_assoc()) {
       $role = $row["name"];
-      $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,?)";
+      $postQuery = "INSERT INTO users (id, email, password, role) VALUES (?,?,?,?)";
       $postStmt = $mysqli->prepare($postQuery);
-      $rc = $postStmt->bind_param('sss', $email, $password, $role);
+      $rc = $postStmt->bind_param('ssss', $uid, $email, $password, $role);
       //declare a varible which will be passed to alert function
       if ($postStmt->execute()) {
-        // Fetch the UUID generated for the inserted record
-        $uuidQuery = "SELECT id FROM users WHERE email = ?";
-        $uuidStmt = $mysqli->prepare($uuidQuery);
-        $uuidStmt->bind_param('s', $email);
-        $uuidStmt->execute();
-        $uuidResult = $uuidStmt->get_result();
-        if ($uuidRow = $uuidResult->fetch_assoc()) {
-          $uid = $uuidRow['id']; // This is the UUID retrieved from the database
-          $addStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, dob, phone, pos_id, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?,?)');
-          $addStmt->bind_param('sssssssss', $code, $name, $gender, $dob, $phone, $pos_id, $address, $photo['name'], $uid);
-          if ($addStmt->execute()) {
-            $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
-          } else {
-            $err = "Please Try Again Or Try Later";
-          }
+        $addStmt = $mysqli->prepare('INSERT INTO employees(id, name, gender, dob, phone, pos_id, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?,?)');
+        $addStmt->bind_param('sssssssss', $code, $name, $gender, $dob, $phone, $pos_id, $address, $photo['name'], $uid);
+        if ($addStmt->execute()) {
+          $success = "Employee Has Been Added" && header("refresh:1; url=employees.php");
+        } else {
+          $err = "Please Try Again Or Try Later";
         }
       }
     }
@@ -92,7 +84,7 @@ require_once('partials/_head.php');
                 <div class="col-md-6 px-5">
                   <img style="height: 175px; width: 175px; object-fit:cover;" src="" id="user_photo" name="user_photo" class="rounded-circle border border-2 border-dark">
                 </div>
-                <input type="text" name="code" class="form-control" value="<?php echo 'emp_' . $uniqueId; ?>">
+                <input type="hidden" name="code" class="form-control" value="<?php echo 'emp_' . $uniqueId; ?>">
                 <div class="form-row">
                   <div class="col-md-6">
                     <label>Name</label>

@@ -1,6 +1,6 @@
 <?php
 $userId = $_SESSION['userId'];
-$role = $_SESSION['role'];
+$role = strtolower($_SESSION['role']);
 switch ($role) {
     case 'admin':
         $ret = "SELECT * FROM  admins  WHERE u_id = '$userId'";

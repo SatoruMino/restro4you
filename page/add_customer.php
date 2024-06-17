@@ -13,6 +13,7 @@ if (isset($_POST['addCustomer'])) {
     $err = "Blank Values Not Accepted";
   } else {
     $code = $_POST['code'];
+    $uid = 'user_' . $uniqueId;
     $name = $_POST['name'];
     $gender = $_POST['gender'];
     $dob = $_POST['dob'];
@@ -23,26 +24,17 @@ if (isset($_POST['addCustomer'])) {
       move_uploaded_file($photo["tmp_name"], "assets/img/users/" . $photo["name"]);
     }
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $postQuery = "INSERT INTO users (email, password, role) VALUES (?,?,'customer')";
+    $postQuery = "INSERT INTO users (id, email, password, role) VALUES (?,?,?,'customer')";
     $postStmt = $mysqli->prepare($postQuery);
-    $rc = $postStmt->bind_param('ss', $email, $password);
+    $rc = $postStmt->bind_param('sss', $uid, $email, $password);
     //declare a varible which will be passed to alert function
     if ($postStmt->execute()) {
-      // Fetch the UUID generated for the inserted record
-      $uuidQuery = "SELECT id FROM users WHERE email = ?";
-      $uuidStmt = $mysqli->prepare($uuidQuery);
-      $uuidStmt->bind_param('s', $email);
-      $uuidStmt->execute();
-      $uuidResult = $uuidStmt->get_result();
-      if ($uuidRow = $uuidResult->fetch_assoc()) {
-        $uid = $uuidRow['id']; // This is the UUID retrieved from the database
-        $addStmt = $mysqli->prepare('INSERT INTO customers(id, name, gender, phone , dob, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?)');
-        $addStmt->bind_param('ssssssss', $code, $name, $gender, $phone, $dob, $address, $photo['name'], $uid);
-        if ($addStmt->execute()) {
-          $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
-        } else {
-          $err = "Please Try Again Or Try Later";
-        }
+      $addStmt = $mysqli->prepare('INSERT INTO customers(id, name, gender, phone , dob, address, photo , u_id) VALUE (?,?,?,?,?,?,?,?)');
+      $addStmt->bind_param('ssssssss', $code, $name, $gender, $phone, $dob, $address, $photo['name'], $uid);
+      if ($addStmt->execute()) {
+        $success = "Customer Has Been Added" && header("refresh:1; url=customers.php");
+      } else {
+        $err = "Please Try Again Or Try Later";
       }
     }
   }

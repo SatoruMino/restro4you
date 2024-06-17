@@ -15,7 +15,7 @@ function check_login()
 
 function diss_allow_role($role)
 {
-	if (in_array($_SESSION['role'], $role)) {
+	if (in_array(strtolower($_SESSION['role']), $role)) {
 		redirect_to("index.php");
 	}
 }

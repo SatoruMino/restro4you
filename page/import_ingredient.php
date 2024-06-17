@@ -12,16 +12,17 @@ if (isset($_POST['importIngredient'])) {
     if (empty($_POST["ingred_id"]) || empty($_POST["sup_id"]) || empty($_POST['ingred_qty']) || empty($_POST['ingred_price'])) {
         $err = "Black value can't be accepted!";
     } else {
+        $code = 'imp_' . $uniqueId;
         $ingred_id = $_POST["ingred_id"];
         $sup_id = $_POST["sup_id"];
         $ingred_qty = intval($_POST["ingred_qty"]);
         $ingred_price = floatval($_POST["ingred_price"]);
         $total = $ingred_qty * $ingred_price;
         //Insert Captured information to a database table
-        $postQuery = "INSERT INTO imports (int_id, sup_id, qty, price, total) VALUES(?,?,?,?,?)";
+        $postQuery = "INSERT INTO imports (id, int_id, sup_id, qty, price, total) VALUES(?,?,?,?,?,?)";
         $postStmt = $mysqli->prepare($postQuery);
         //bind paramaters
-        $rc = $postStmt->bind_param('sssss', $ingred_id, $sup_id, $ingred_qty, $ingred_price, $total);
+        $rc = $postStmt->bind_param('ssssss', $code, $ingred_id, $sup_id, $ingred_qty, $ingred_price, $total);
         $postStmt->execute();
         //declare a varible which will be passed to alert function
         if ($postStmt) {
