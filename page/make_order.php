@@ -71,7 +71,7 @@ require_once('partials/_head.php');
                   <div class="form-row">
                     <div class="col-md-6">
                       <label>Order Code</label>
-                      <input type="text" name="o_code" value="<?php echo $alpha; ?>-<?php echo $beta; ?>" class="form-control" value="">
+                      <input type="text" name="o_code" value="<?php echo 'order_' . $uniqueId; ?>" class="form-control" value="">
                     </div>
                     <div class="col-md-6">
                       <label>Product Price ($)</label>
