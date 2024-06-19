@@ -177,7 +177,6 @@ require_once('partials/_head.php');
                             <div class="form-group">
                               <label class="form-control-label" for="input-gender">Gender</label>
                               <select name="gender" class="form-control form-control-alternative">
-                                <option>Please Select Gender</option>
                                 <option value="Male" <?php echo ($user->gender == 'Male') ? 'selected' : null; ?>>Male</option>
                                 <option value="Female" <?php echo ($user->gender == 'Female') ? 'selected' : null; ?>>Female</option>
                               </select>

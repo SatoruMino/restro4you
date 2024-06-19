@@ -16,7 +16,7 @@ if (isset($_POST['updateProduct'])) {
     $cate = $_POST['cate'];
     $img = $_FILES['img']['name'];
     $old_img = $_POST['old_img'];
-    if ($photo) {
+    if ($img) {
       // Sanitize the filename
       $photo = basename($_FILES['img']['name']);
       $target_path = "assets/img/products/" . $photo;

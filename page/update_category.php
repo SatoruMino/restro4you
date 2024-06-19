@@ -82,7 +82,7 @@ require_once('partials/_head.php');
                                     <br>
                                     <div class="form-row">
                                         <div class="col-md-6">
-                                            <input type="submit" name="updateCategory" value="Update Position" class="btn btn-success" value="">
+                                            <input type="submit" name="updateCategory" value="Update Category" class="btn btn-success" value="">
                                         </div>
                                     </div>
                                 </form>
