@@ -88,7 +88,8 @@
                     'prod_qty': val,
                 },
                 success: function(data) {
-                    $('#status').text(data);
+                    var statusText = '#status' + id;
+                    $(statusText).text(data);
                 }
             });
         }

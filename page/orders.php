@@ -144,16 +144,16 @@ require_once('partials/_head.php');
                         }
                         ?>
                       </td>
-                      <td id="prod_id"><?php echo $prod->id; ?></td>
-                      <td id="prod_name"><?php echo $prod->name; ?></td>
+                      <td id="prod_id" class="prod_id"><?php echo $prod->id; ?></td>
+                      <td id="prod_name" class="prod_name"><?php echo $prod->name; ?></td>
                       <td><?php echo $prod->cate_name; ?></td>
-                      <td>$ <span id="prod_price"><?php echo $prod->price; ?></span></td>
+                      <td>$ <span id="prod_price" class="prod_price"><?php echo $prod->price; ?></span></td>
                       <td>
-                        <input type="number" id="prod_qty" name="prod_qty" class="form-control input-no-border" min="1" placeholder="Specify qty!">
+                        <input type="number" id="prod_qty" name="prod_qty" class="form-control input-no-border prod_qty" min="1" placeholder="Specify qty!">
                       </td>
-                      <td><span id="status" name="status" class="form-control input-no-border">Unknown!</span></td>
+                      <td><span id="status<?php echo $prod->id; ?>" name="status" class="form-control input-no-border status">Unknown!</span></td>
                       <td>
-                        <button class="btn btn-sm btn-success" id="makeOrderButton">
+                        <button class="btn btn-sm btn-success" id="makeOrderButton" name="makeOrderButton">
                           <i class="fas fa-cart-plus"></i>
                           Place Order
                         </button>
@@ -180,8 +180,8 @@ require_once('partials/_head.php');
   <script>
     var snackbar = $('#snackbar');
     $(document).ready(function() {
-      function validateOrder() {
-        var status = $('#status').text();
+      function validateOrder(id) {
+        var status = $('#status' + id).text();
         console.log(status);
         if (status != 'Available') {
           showSnackBar(snackbar, 'Product is not available to order!');
@@ -190,22 +190,29 @@ require_once('partials/_head.php');
         return true;
       }
       //Fetch Product Qty To Find Ingredient Needed
-      $('#prod_qty').on("input", function() {
-        var id = $('#prod_id').text();
-        var qty = $(this).val();
-        //Fetch Product Status
+      $('input[name="prod_qty"]').on("input", function() {
+        var tr = $(this).closest('tr'); // Find the parent <tr> of the input field
+        var id = tr.find('.prod_id').text().trim(); // Fetch product ID
+        var qty = $(this).val(); // Fetch quantity value
+        // You can perform further actions here with id and qty if needed
+        console.log("Product ID: " + id + ", Quantity: " + qty);
+        // Example: Fetch product status
         getProductStatus(id, qty);
       });
-      //Placer Order
-      $('#makeOrderButton').click(function() {
-        if (validateOrder()) {
-          var id = $('#prod_id').text();
-          var name = $('#prod_name').text();
-          var price = $('#prod_price').text();
-          var qty = $('#prod_qty').val();
+      // Place Order button click handler
+      $('button[name="makeOrderButton"]').click(function() {
+        var tr = $(this).closest('tr'); // Find the parent <tr> of the button
+        var id = tr.find('.prod_id').text().trim(); // Fetch product ID
+        console.log(id);
+        var name = tr.find('.prod_name').text().trim(); // Fetch product name
+        var price = tr.find('.prod_price').text().trim(); // Fetch product price
+        var qty = tr.find('.prod_qty').val(); // Fetch quantity
+        // Redirect to order page with parameters
+        if (validateOrder(id)) {
           window.location.href = "make_order.php?prod_id=" + id + "&prod_name=" + name + "&prod_price=" + price + "&prod_qty=" + qty;
         }
       });
+
     });
   </script>
 

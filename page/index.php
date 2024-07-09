@@ -194,7 +194,7 @@ require_once('partials/_analytics.php');
                       <div class="row">
                         <div class="col">
                           <h5 class="card-title text-uppercase text-muted mb-0">Total Orders</h5>
-                          <span class="h2 font-weight-bold mb-0"><?php echo $orders; ?></span>
+                          <span class="h2 font-weight-bold mb-0"><?php echo $custOrder; ?></span>
                         </div>
                         <div class="col-auto">
                           <div class="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -350,6 +350,23 @@ require_once('partials/_analytics.php');
                       <div class="col-auto">
                         <div class="icon icon-shape bg-purple text-white rounded-circle shadow">
                           <i class="fa-solid fa-money-bill-transfer"></i>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-3 col-lg-6">
+                <div class="card card-stats mb-4 mb-xl-0">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">ORDERS</h5>
+                        <span class="h2 font-weight-bold mb-0"><?php echo $orders; ?></span>
+                      </div>
+                      <div class="col-auto">
+                        <div class="icon icon-shape bg-purple text-white rounded-circle shadow">
+                          <i class="fa-solid fa-shopping-cart"></i>
                         </div>
                       </div>
                     </div>

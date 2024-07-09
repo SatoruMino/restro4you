@@ -1,4 +1,5 @@
 <?php
+$userId = $_SESSION['userId'];
 //1. Customers
 $query = "SELECT COUNT(*) FROM `customers` ";
 $stmt = $mysqli->prepare($query);
@@ -14,6 +15,9 @@ $stmt->execute();
 $stmt->bind_result($orders);
 $stmt->fetch();
 $stmt->close();
+
+
+
 
 //3. Orders
 $query = "SELECT COUNT(*) FROM `products` ";
@@ -60,5 +64,17 @@ $query = "SELECT COUNT(*) FROM `suppliers`";
 $stmt = $mysqli->prepare($query);
 $stmt->execute();
 $stmt->bind_result($suppliers);
+$stmt->fetch();
+$stmt->close();
+
+//8. Individual Customer Orders
+$query = "SELECT COUNT(*)
+          FROM orders o
+          INNER JOIN customers c ON o.cust_id = c.id
+          WHERE c.u_id = ?";
+$stmt = $mysqli->prepare($query);
+$stmt->bind_param('s', $userId);  // Bind user ID as integer
+$stmt->execute();
+$stmt->bind_result($custOrder);
 $stmt->fetch();
 $stmt->close();
