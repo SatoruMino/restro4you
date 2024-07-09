@@ -53,7 +53,7 @@ require_once('partials/_head.php');
                                     <?php
                                     $ret = "SELECT o.*, c.name AS cust_name, p.name AS prod_name FROM
                                     orders o INNER JOIN customers c ON o.cust_id = c.id INNER JOIN 
-                                    products p ON o.p_id = p.id WHERE order_status = 'Paid' ORDER BY `o`.`order_date` DESC  ";
+                                    products p ON o.p_id = p.id  WHERE o.order_Status = 'Paid'";
                                     $stmt = $mysqli->prepare($ret);
                                     $stmt->execute();
                                     $res = $stmt->get_result();
